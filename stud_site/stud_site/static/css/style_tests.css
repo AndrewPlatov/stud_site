@@ -1,0 +1,64 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 20px;
+}
+
+#timer {
+    font-size: 1.2em;
+    margin-bottom: 20px;
+}
+
+#question-container {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+h2, h3 {
+    font-size: 1.5em;
+}
+
+#answers button {
+    display: block; /* Кнопки будут занимать всю ширину */
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px; /* Отступ между кнопками */
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff; /* Цвет фона кнопок */
+    color: white; /* Цвет текста кнопок */
+    font-size: 1em;
+    cursor: pointer; /* Указатель при наведении */
+}
+
+#answers button:hover {
+    background-color: #0056b3; /* Цвет фона при наведении */
+}
+
+.selected {
+   background-color:#03b300 !important; /* Цвет выделенной кнопки */
+}
+
+#result div { /* Стили для каждого вопроса в результате */
+   margin-bottom: 20px; /* Отступ между вопросами */
+   padding-bottom: 10px; /* Отступ снизу */
+   border-bottom: 1px solid #ccc; /* Разделительная линия между вопросами */
+}
+
+.question-block {
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px; /* Закругленные углы */
+}
+
+.correct {
+    background-color: lightgreen; /* Светло-зеленый фон для правильных ответов */
+}
+
+.incorrect {
+    background-color: lightcoral; /* Светло-красный фон для неправильных ответов */
+}

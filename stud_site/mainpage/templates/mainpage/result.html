@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<title>Результаты</title>
+</head>
+<body>
+<h2>Тест завершен!</h2>
+<p>Ваш результат: {{ score }} из {{ total }}</p>
+<p>Ваша оценка: {{ grade }}</p>
+
+<h3>Подробности:</h3>
+{% for res in results %}
+<div style="border:1px solid #000; padding:10px; margin-bottom:10px;">
+<h4>Вопрос: {{ res.question }}</h4>
+<p>Ваш ответ: {{ res.user_answers|join:", " }}</p>
+<p>Правильный ответ: {{ res.correct_answers|join:", " }}</p>
+<p>{{ res.is_correct|yesno:"Правильно,Неправильно" }}</p>
+</div>
+{% endfor %}
+
+<form method="get" action="{% url 'quiz' %}">
+<button type="submit">Пройти заново</button>
+</form>
+
+</body>
+</html>

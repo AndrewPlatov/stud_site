@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
+// window.addEventListener('load', () => {
     const form = document.getElementById('question-form');
-
+    console.log('Js')
     // Проверяем, есть ли форма на странице
     if (!form) return;
 

@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.http import JsonResponse
 
 def main(request):
     return render(
@@ -74,6 +75,9 @@ def quiz(request):
         request.session['current_index'] += 1
         request.session['results'] = results
 
+        # return JsonResponse(
+        #     results
+        # )
         return redirect('quiz')
 
     context = {
@@ -93,3 +97,19 @@ def calculate_grade(score, total):
         return 2
     else:
         return 1
+    
+
+from mainpage import models
+from django.core.paginator import Paginator
+def feed(request):
+    articles = models.Article.objects.all()
+    article_paginator = Paginator(articles, 2)
+    page = request.GET.get('page')
+    context = {
+        'posts': article_paginator.get_page(page)
+    }
+    return render(
+        request,               # так будет всегда
+        'mainpage/feed.html',  # путь к шаблону
+        context
+    )

@@ -3,26 +3,28 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Тест3</title>
-    <script src="test3.js" defer></script>
-    <link rel="stylesheet" href="mainpage/css/style_tests.css">
+<meta charset="UTF-8" />
+<title>Тест</title>
+<link rel="stylesheet" href="{% static 'mainpage/css/style_tests.css' %}">
+<script src="{% static 'mainpage/js/script.js' %}"> </script>
 </head>
 <body>
+<h2>{{ question.question_text }}</h2>
 
-    <div class="warning">
-        <p>Это не те тесты, что вы ищете</p>
-    </div>    
-
-<div id="timer">Осталось времени: 15:00</div>
-<div id="question-container">
-    <h2 id="question"></h2>
-    <div id="answers"></div>
-    <input type="text" id="user-answer" style="display:none;">
-    <button id="submit-answer">Ответить</button>
-</div>
-
-<div id="result"></div>
+<form method="post" id="question-form">
+{% csrf_token %}
+{% if question.question_type == 'multiple-choice' %}
+    {% for answer in question.answers %}
+      <label>
+          <input type="checkbox" name="answers" value="{{ answer.id }}">
+          {{ answer.answer_text }}
+      </label><br>
+    {% endfor %}
+{% elif question.question_type == 'text-input' %}
+    <input type="text" name="user_answer" required>
+{% endif %}
+<br>
+<button type="submit">Ответить</button>
+</form>
 </body>
 </html>

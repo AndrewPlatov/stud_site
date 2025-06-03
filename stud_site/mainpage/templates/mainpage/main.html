@@ -11,6 +11,8 @@
 </head>
 <body>
 
+<img src="{{ object.image.url }}" alt="My Image">
+
 <div class="warning">
     <p>Внимание! Пожалуйста, убедитесь, что Вы готовы к тестированию перед началом.</p>
     <p>Время прохождения и количество попыток ограничено!</p>
@@ -19,12 +21,10 @@
 <div class="container"> 
     <h1>Выберите тест</h1>
     
-    <!-- Ссылка на тест test1 -->
     <a href="{% url 'test1' %}" class="test-button">Тест 1</a>
     
-    <!-- Остальные пункты -->
-    <a href="test2.html" class="test-button">Пунктуация: запятые</a>
-    <a href="test3.html" class="test-button">Тест 3</a>
+    <a href="{% url 'test2' %}" class="test-button">Пунктуация: запятые</a>
+    <a href="{% url 'test3' %}" class="test-button">Тест 3</a>
 
     <a href="student_cabinet.html" class='button'>Назад в личный кабинет</a>
 </div>

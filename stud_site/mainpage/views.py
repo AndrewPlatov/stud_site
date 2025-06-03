@@ -1,16 +1,54 @@
-from django.shortcuts import render
-from django.http import JsonResponse
+from django.shortcuts import render, redirect
 
 def main(request):
     return render(
-        request, 
-        'mainpage/main.html'
+        request,               # так будет всегда
+        'mainpage/main.html',  # путь к шаблону
+        # здесь будут данные!
     )
-    
+
+def summary(request):
+    return render(
+        request,               # так будет всегда
+        'mainpage/summary.html',  # путь к шаблону
+        # здесь будут данные!
+    )
+
+from . import forms
+from django.contrib import auth
+
+def register(request):
+    if request.method == 'POST':
+        user_form = forms.UserRegistrationForm(request.POST)
+        if user_form.is_valid():
+            # Create a new user object but avoid saving it yet
+            new_user = user_form.save(commit=False)
+            # Set the chosen password
+            new_user.set_password(user_form.cleaned_data['password'])
+            # Save the User object
+            new_user.save()
+            auth.login(request, new_user)
+            return redirect('/')
+    else:
+        user_form = forms.UserRegistrationForm()
+    return render(
+        request,
+        'user/register.html',
+        {
+            'form': user_form
+        })
+
+
 from django.shortcuts import render
 
 def test1(request):
-    return render(request, 'mainpage/test1.html')   
+    return render(request, 'mainpage/test1.html')  
+
+def test2(request):
+        return render(request, 'mainpage/test2.html') 
+    
+def test3(request):
+    return render(request, 'mainpage/test3.html') 
 
 from django.shortcuts import render, redirect
 from .models import Question
@@ -98,18 +136,3 @@ def calculate_grade(score, total):
     else:
         return 1
     
-
-from mainpage import models
-from django.core.paginator import Paginator
-def feed(request):
-    articles = models.Article.objects.all()
-    article_paginator = Paginator(articles, 2)
-    page = request.GET.get('page')
-    context = {
-        'posts': article_paginator.get_page(page)
-    }
-    return render(
-        request,               # так будет всегда
-        'mainpage/feed.html',  # путь к шаблону
-        context
-    )

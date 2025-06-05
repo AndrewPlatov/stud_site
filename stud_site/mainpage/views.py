@@ -7,6 +7,14 @@ def main(request):
         # здесь будут данные!
     )
 
+def check(request):
+    return render(
+        request,               # так будет всегда
+        'mainpage/check.html',  # путь к шаблону
+        # здесь будут данные!
+    )
+
+
 def summary(request):
     return render(
         request,               # так будет всегда

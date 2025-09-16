@@ -1,4 +1,8 @@
 from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.contrib.auth import login
+from .forms import RegisterForm
 
 def main(request):
     return render(
@@ -143,4 +147,75 @@ def calculate_grade(score, total):
         return 2
     else:
         return 1
-    
+
+
+def student_cabinet(request):
+    return render(request, 'mainpage/student_cabinet.html')
+
+@login_required
+def update_profile(request):
+    if request.method == 'POST':
+        user = request.user
+        user.email = request.POST.get('email')
+        user.first_name = request.POST.get('name')  # или ваш подход к именам
+        # Обработка загрузки фото
+        if 'photo' in request.FILES:
+            user.photo = request.FILES['photo']
+        user.save()
+        return redirect('student_cabinet')
+    # На GET запрос - просто перенаправление или форма с текущими данными
+    return render(request, 'mainpage/student_cabinet.html')
+
+@login_required
+def homework_upload(request):
+    if request.method == 'POST':
+        # логика обработки файла
+        pass
+    return render(request, 'mainpage/homework_upload.html')
+
+@login_required
+def homework_download(request):
+    # логика поиска файла и отдачи пользователю
+    pass
+
+@login_required(login_url='login')
+def student_cabinet(request):
+    user = request.user
+
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        photo = request.FILES.get('photo')
+
+        # Предполагается, что имя — в first_name, исправьте, если иначе
+        user.first_name = name
+        user.email = email
+
+        if photo:
+            # Пример, если у пользователя есть связанная модель Profile с полем photo
+            if hasattr(user, 'profile'):
+                user.profile.photo = photo
+                user.profile.save()
+            else:
+                # Или, если поле photo непосредственно в модели User
+                user.photo = photo
+
+        user.save()
+        messages.success(request, 'Профиль успешно обновлен.')
+        return redirect('student_cabinet')
+
+    return render(request, 'mainpage/student_cabinet.html', {'user': user})
+
+def student_cabinet(request):
+    return render(request, 'mainpage/student_cabinet.html')
+
+def register(request):
+    if request.method == 'POST':
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('student_cabinet')
+    else:
+        form = RegisterForm()
+    return render(request, 'registration/register.html', {'form': form})

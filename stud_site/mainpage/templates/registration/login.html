@@ -1,0 +1,35 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Вход</title>
+  <link rel="stylesheet" href="{% static 'mainpage/css/style_login.css' %}">
+</head>
+<body>
+  <div class="login-container">
+    <h1>Вход в систему</h1>
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+      <label for="username">Имя пользователя:</label>
+      <input type="text" name="username" id="username" required autofocus>
+
+      <label for="password">Пароль:</label>
+      <input type="password" name="password" id="password" required>
+
+      <button type="submit">Войти</button>
+    </form>
+
+    <p>Если вы ещё не зарегистрированы, <a href="{% url 'register' %}">создайте аккаунт</a>.</p>
+    
+  </div>
+
+  {% if form.errors %}
+  <script>
+    alert("Неверное имя пользователя или пароль.");
+  </script>
+  {% endif %}
+</body>
+</html>

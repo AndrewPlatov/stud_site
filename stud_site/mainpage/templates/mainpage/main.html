@@ -22,11 +22,11 @@
     <h1>Выберите тест</h1>
     
     <a href="{% url 'test1' %}" class="test-button">Тест 1</a>
-    
-    <a href="{% url 'test2' %}" class="test-button">Пунктуация: запятые</a>
+    <a href="{% url 'test2' %}" class="test-button">Тест 2</a>
     <a href="{% url 'test3' %}" class="test-button">Тест 3</a>
 
-    <a href="student_cabinet.html" class='button'>Назад в личный кабинет</a>
+    <a href="{% url 'student_cabinet' %}" class='button'>Назад в личный кабинет</a>
+    
 </div>
 
 </body>

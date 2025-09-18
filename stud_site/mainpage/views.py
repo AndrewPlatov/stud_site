@@ -3,6 +3,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth import login, authenticate
 from .forms import RegisterForm
+from .models import Profile
+from .forms import TeacherSignUpForm
 
 def main(request):
     return render(
@@ -18,6 +20,8 @@ def check(request):
         # здесь будут данные!
     )
 
+def home(request):
+    return render(request, 'mainpage/home.html')
 
 def summary(request):
     return render(
@@ -214,3 +218,75 @@ def register(request):
     else:
         form = RegisterForm()
     return render(request, 'registration/register.html', {'form': form})
+
+
+@login_required
+def update_profile(request):
+    user = request.user
+
+    try:
+        profile = user.profile
+    except Profile.DoesNotExist:
+        profile = Profile(user=user)
+
+    if request.method == 'POST':
+        profile.name = request.POST.get('name', profile.name)
+        profile.lastname = request.POST.get('lastname', profile.lastname)
+
+        email = request.POST.get('email', user.email)
+        if email and email != user.email:
+            user.email = email
+            user.save()
+
+        if 'photo' in request.FILES:
+            profile.photo = request.FILES['photo']
+
+        profile.save()
+        messages.success(request, 'Профиль успешно обновлён.')
+
+    return render(request, 'mainpage/student_cabinet.html', {
+        'profile': profile,
+        'user': user,
+    })
+
+def teacher_register(request):
+    if request.method == 'POST':
+        form = TeacherSignUpForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            # Если есть кастомное поле для роли
+            # user.is_teacher = True
+            user.save()
+            login(request, user)  # сразу логиним пользователя
+
+            # Можно сохранить данные профиля учителя при необходимости
+
+            return redirect('teacher_profile')
+    else:
+        form = TeacherSignUpForm()
+    return render(request, 'mainpage/teacher_register.html', {'form': form})
+
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def teacher_profile(request):
+    # можно добавить логику, если нужно отобразить данные учителя
+    return render(request, 'mainpage/teacher_profile.html', {'user': request.user})
+
+def teacher_login(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            # Возможно, проверить, что пользователь - учитель, если есть такая логика
+            login(request, user)
+            return redirect('teacher_profile')  # или куда нужно после входа
+        else:
+            messages.error(request, "Неверное имя пользователя или пароль")
+    
+    return render(request, 'mainpage/teacher_login.html')
+
+def teacher_profile(request):
+    return render(request, 'mainpage/teacher_profile.html')

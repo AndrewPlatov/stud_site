@@ -1,0 +1,134 @@
+/* Сброс отступов и шрифты для всего body */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f7fa;
+    color: #333;
+    margin: 0;
+    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Заголовок страницы */
+h1 {
+    margin-bottom: 25px;
+    color: #222;
+    font-weight: 700;
+    text-align: center;
+}
+
+/* Ссылка под формой */
+p {
+    margin-top: 20px;
+    font-size: 0.95rem;
+    color: #555;
+}
+
+p a {
+    color: #4a90e2;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+p a:hover,
+p a:focus {
+    color: #357ABD;
+    text-decoration: underline;
+}
+
+/* Контейнер формы */
+form.register-form {
+    width: 100%;
+    max-width: 420px;
+    background-color: #fff;
+    padding: 30px 35px;
+    border-radius: 10px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    box-sizing: border-box;
+}
+
+/* Стили для каждого поля, обёрнутого в <p> (по умолчанию при as_p) */
+form.register-form p {
+    margin-bottom: 18px;
+}
+
+/* Стили для label */
+form.register-form label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    font-size: 1rem;
+    color: #444;
+}
+
+/* Стили для input-полей */
+form.register-form input[type="text"],
+form.register-form input[type="email"],
+form.register-form input[type="password"] {
+    width: 100%;
+    padding: 11px 14px;
+    font-size: 1rem;
+    border: 1.7px solid #ccc;
+    border-radius: 7px;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* При фокусе на input */
+form.register-form input[type="text"]:focus,
+form.register-form input[type="email"]:focus,
+form.register-form input[type="password"]:focus {
+    border-color: #4a90e2;
+    box-shadow: 0 0 8px rgba(74, 144, 226, 0.5);
+    outline: none;
+}
+
+/* Кнопка отправки */
+form.register-form button[type="submit"] {
+    width: 100%;
+    background-color: #4a90e2;
+    border: none;
+    padding: 14px 0;
+    font-size: 1.15rem;
+    color: white;
+    font-weight: 700;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    user-select: none;
+}
+
+form.register-form button[type="submit"]:hover,
+form.register-form button[type="submit"]:focus {
+    background-color: #357ABD;
+    outline: none;
+}
+
+/* Ошибки валидации (списки ошибок по умолчанию Django) */
+form.register-form .errorlist {
+    margin: 5px 0 12px 0;
+    padding-left: 20px;
+    color: #d93025;
+    font-size: 0.9rem;
+}
+
+/* Поля с ошибками: красный бордер и тень */
+form.register-form input.error {
+    border-color: #d93025;
+    box-shadow: 0 0 8px rgba(217, 48, 37, 0.5);
+}
+
+/* Адаптивность на узких экранах */
+@media (max-width: 480px) {
+    body {
+        padding: 15px 10px;
+    }
+
+    form.register-form {
+        padding: 25px 20px;
+        width: 100%;
+    }
+}

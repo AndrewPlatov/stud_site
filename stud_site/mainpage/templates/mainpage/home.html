@@ -1,0 +1,29 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <title>Образовательная платформа</title>
+    <link rel="stylesheet" href="{% static 'mainpage/css/style_home.css' %}">
+</head>
+<body>
+
+<header>
+    <h1>Добро пожаловать на образовательную платформу</h1>
+</header>
+
+<section class="description">
+    <p>
+        Добро пожаловать! Выберите, пожалуйста, нужный вариант входа:
+    </p>
+</section>
+
+<section class="links">
+    <a href="{% url 'login' %}">Вход для ученика</a>
+    <a href="{% url 'register' %}">Регистрация ученика</a>
+    <a href="{% url 'teacher_login' %}">Вход для учителя</a> 
+    <a href="{% url 'teacher_register' %}">Регистрация для учителя</a>
+</section>
+
+</body>
+</html>

@@ -9,7 +9,7 @@
 </head>
 <body>
   <div class="login-container">
-    <h1>Вход в систему ученика</h1>
+    <h1>Вход в систему учителя</h1>
 
     <form method="post" novalidate>
       {% csrf_token %}
@@ -22,7 +22,7 @@
       <button type="submit">Войти</button>
     </form>
 
-    <p>Если вы ещё не зарегистрированы, <a href="{% url 'register' %}">создайте аккаунт</a>.</p>
+    <p>Если вы ещё не зарегистрированы, <a href="{% url 'teacher_register' %}">создайте аккаунт</a>.</p>
     
   </div>
 

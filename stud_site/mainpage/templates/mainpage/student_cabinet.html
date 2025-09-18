@@ -1,5 +1,4 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -8,35 +7,51 @@
     <link rel="stylesheet" href="{% static 'mainpage/css/style_cabinet.css' %}">
 </head>
 <body>
+
+    <header class="page-header">
+        <div class="container">
+            <nav>
+                <a href="{% url 'home' %}" class="nav-link">Главная</a>
+            </nav>
+        </div>
+    </header>
+
     <h1>Добро пожаловать в личный кабинет</h1>
     <p>Здесь отображается информация и настройки ученика.</p>
-    
-    <!-- Форма для обновления данных и загрузки фото -->
+
+    {% if messages %}
+        <ul style="color:green;">
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
     <h2>Редактировать профиль</h2>
     <form method="post" enctype="multipart/form-data" action="{% url 'update_profile' %}">
         {% csrf_token %}
+
         <label for="name">Имя:</label>
-        <input type="text" id="name" name="name" value="{{ user.name }}" required><br><br>
+        <input type="text" id="name" name="name" value="{{ profile.name }}" required><br><br>
 
         <label for="lastname">Фамилия:</label>
-        <input type="text" id="lastname" name="lastname" value="{{ user.lastname }}" required><br><br>
+        <input type="text" id="lastname" name="lastname" value="{{ profile.lastname }}" required><br><br>
 
         <label for="email">Email:</label>
         <input type="email" id="email" name="email" value="{{ user.email }}" required><br><br>
 
         <label for="photo">Фото:</label>
-        <input type="file" id="photo" name="photo"><br><br>
+        <input type="file" id="photo" name="photo" accept="image/*"><br><br>
+
+        {% if profile.photo %}
+            <img src="{{ profile.photo.url }}" alt="Ваше фото" id="photo-preview" />
+        {% else %}
+            <img src="{% static 'mainpage/img/default_user_photo.png' %}" alt="Фото отсутствует" id="photo-preview" />
+        {% endif %}
 
         <button type="submit">Сохранить изменения</button>
     </form>
 
-    <!-- Отображение текущей фотографии -->
-    {% if user.photo %}
-        <h3>Ваше фото:</h3>
-        <img src="{{ user.photo.url }}" alt="Ваше фото" width="150" height="150">
-    {% endif %}
-
-    <!-- Переходы на страницы домашнего задания -->
     <h2>Домашние задания</h2>
     <ul>
         <li><a href="{% url 'homework_upload' %}">Загрузить домашнее задание</a></li>
@@ -48,5 +63,15 @@
         {% csrf_token %}
         <button type="submit">Выйти</button>
     </form>
+
+    <script>
+    document.getElementById('photo').addEventListener('change', function(event) {
+        const [file] = this.files;
+        if (file) {
+            const preview = document.getElementById('photo-preview');
+            preview.src = URL.createObjectURL(file);
+        }
+    });
+    </script>
 </body>
 </html>

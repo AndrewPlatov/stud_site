@@ -57,7 +57,7 @@ ROOT_URLCONF = 'stud_site.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -129,3 +129,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = 'student_cabinet'  # например, куда-то после успешного входа
+LOGOUT_REDIRECT_URL = 'login'
+
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True

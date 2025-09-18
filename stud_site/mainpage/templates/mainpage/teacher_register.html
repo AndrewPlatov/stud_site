@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="{% static 'mainpage/css/style_register.css' %}">
 </head>
 <body>
+    
     <h1>Регистрация нового учителя</h1>
 
     <form method="post" class="register-form" novalidate>
@@ -17,5 +18,7 @@
     </form>
 
     <p>Есть аккаунт? <a href="{% url 'teacher_login' %}">Войти</a></p>
+
+    <p>Возврат на главную страницу: <a href="{% url 'home' %}">Главная</a>.</p>
 </body>
 </html>

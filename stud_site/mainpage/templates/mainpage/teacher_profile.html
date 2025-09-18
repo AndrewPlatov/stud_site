@@ -7,6 +7,15 @@
     <title>Личный кабинет учителя</title>
 </head>
 <body>
+
+   <header class="page-header">
+        <div class="container">
+            <nav>
+                <a href="{% url 'home' %}" class="nav-link">Главная</a>
+            </nav>
+        </div>
+    </header> 
+    
     <h1>Добро пожаловать в личный кабинет, {{ user.first_name }}!</h1>
     <p>Ваши данные:</p>
     <ul>
@@ -17,3 +26,45 @@
     </ul>
 </body>
 </html>
+
+
+{% comment %} {% load static %}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <title>Личный кабинет учителя</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'mainpage/css/style_profile.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h1>Добро пожаловать в личный кабинет, {{ user.first_name }}!</h1>
+        
+        <form method="post" class="profile-form">
+            {% csrf_token %}
+            <label for="first_name">Имя:</label>
+            <input type="text" id="first_name" name="first_name" value="{{ user.first_name }}" required>
+
+            <label for="last_name">Фамилия:</label>
+            <input type="text" id="last_name" name="last_name" value="{{ user.last_name }}" required>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" value="{{ user.email }}" required>
+
+            <label for="username">Имя пользователя:</label>
+            <input type="text" id="username" name="username" value="{{ user.username }}" required>
+
+            <button type="submit">Сохранить изменения</button>
+        </form>
+
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li class="{{ message.tags }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+</body>
+</html> {% endcomment %}

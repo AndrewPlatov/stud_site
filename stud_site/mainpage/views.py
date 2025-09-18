@@ -290,3 +290,29 @@ def teacher_login(request):
 
 def teacher_profile(request):
     return render(request, 'mainpage/teacher_profile.html')
+
+# ------------------------------------------------------------------------------- #
+# @login_required
+# def teacher_profile(request):
+#     user = request.user
+
+#     if request.method == 'POST':
+#         first_name = request.POST.get('first_name', '').strip()
+#         last_name = request.POST.get('last_name', '').strip()
+#         email = request.POST.get('email', '').strip()
+#         username = request.POST.get('username', '').strip()
+
+#         # Простейшая валидация (можно расширить)
+#         if not first_name or not last_name or not email or not username:
+#             messages.error(request, 'Пожалуйста, заполните все поля.')
+#         else:
+#             user.first_name = first_name
+#             user.last_name = last_name
+#             user.email = email
+#             user.username = username
+#             user.save()
+#             messages.success(request, 'Данные успешно обновлены.')
+#             return redirect('teacher_profile')
+
+#     return render(request, 'mainpage/teacher_profile.html')
+

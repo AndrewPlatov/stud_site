@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.contrib.auth import login
+from django.contrib.auth import login, authenticate
 from .forms import RegisterForm
 
 def main(request):
@@ -33,11 +33,8 @@ def register(request):
     if request.method == 'POST':
         user_form = forms.UserRegistrationForm(request.POST)
         if user_form.is_valid():
-            # Create a new user object but avoid saving it yet
             new_user = user_form.save(commit=False)
-            # Set the chosen password
             new_user.set_password(user_form.cleaned_data['password'])
-            # Save the User object
             new_user.save()
             auth.login(request, new_user)
             return redirect('/')
@@ -157,7 +154,7 @@ def update_profile(request):
     if request.method == 'POST':
         user = request.user
         user.email = request.POST.get('email')
-        user.first_name = request.POST.get('name')  # или ваш подход к именам
+        user.first_name = request.POST.get('name')
         # Обработка загрузки фото
         if 'photo' in request.FILES:
             user.photo = request.FILES['photo']
@@ -187,17 +184,15 @@ def student_cabinet(request):
         email = request.POST.get('email')
         photo = request.FILES.get('photo')
 
-        # Предполагается, что имя — в first_name, исправьте, если иначе
         user.first_name = name
         user.email = email
 
         if photo:
-            # Пример, если у пользователя есть связанная модель Profile с полем photo
             if hasattr(user, 'profile'):
                 user.profile.photo = photo
                 user.profile.save()
             else:
-                # Или, если поле photo непосредственно в модели User
+
                 user.photo = photo
 
         user.save()

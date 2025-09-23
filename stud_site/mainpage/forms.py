@@ -66,49 +66,28 @@ class TeacherSignUpForm(UserCreationForm):
         fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2')
     
 
-# forms.py
+# mainpage/forms.py
+
 from django import forms
-from django.forms.models import inlineformset_factory
 from .models import Question, Answer
+from django.forms import inlineformset_factory
 
 class QuestionForm(forms.ModelForm):
     class Meta:
         model = Question
-        fields = ['test', 'text', 'question_type']
+        fields = ['text']
+
+class AnswerForm(forms.ModelForm):
+    class Meta:
+        model = Answer
+        fields = ['text', 'is_correct']
 
 AnswerFormSet = inlineformset_factory(
     Question,
     Answer,
-    fields=['text', 'is_correct'],
-    extra=3,  # количество пустых форм для ответов по умолчанию
-    can_delete=True
+    form=AnswerForm,
+    extra=4,  # по умолчанию 4 варианта ответов
+    can_delete=False,
+    min_num=1,
+    validate_min=True
 )
-
-
-# forms.py
-from django import forms
-from .models import Question, Answer
-
-class TestTakeForm(forms.Form):
-    def __init__(self, *args, **kwargs):
-        questions = kwargs.pop('questions')  # queryset с вопросами теста
-        super().__init__(*args, **kwargs)
-
-        for question in questions:
-            answers = question.answers.all()
-            choices = [(answer.id, answer.text) for answer in answers]
-
-            if question.question_type == Question.SINGLE_CHOICE:
-                self.fields[f'question_{question.id}'] = forms.ChoiceField(
-                    label=question.text,
-                    choices=choices,
-                    widget=forms.RadioSelect,
-                    required=True
-                )
-            else:  # MULTIPLE_CHOICE
-                self.fields[f'question_{question.id}'] = forms.MultipleChoiceField(
-                    label=question.text,
-                    choices=choices,
-                    widget=forms.CheckboxSelectMultiple,
-                    required=True
-                )

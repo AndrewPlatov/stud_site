@@ -292,81 +292,43 @@ def teacher_profile(request):
     return render(request, 'mainpage/teacher_profile.html')
 
 
-# views.py
+# mainpage/views.py
+
 from django.shortcuts import render, redirect
+from .models import Question
 from .forms import QuestionForm, AnswerFormSet
 
-# views.py
-from django.shortcuts import render, redirect
-from .forms import QuestionForm, AnswerFormSet
-
-def create_question(request):
+def create_test(request):
     if request.method == 'POST':
-        form = QuestionForm(request.POST)
-        if form.is_valid():
-            question = form.save()
-            answer_formset = AnswerFormSet(request.POST, instance=question)
-
-            if answer_formset.is_valid():
-                answer_formset.save()
-                return redirect('questions_list')  # замените на нужный URL
+        question_form = QuestionForm(request.POST)
+        if question_form.is_valid():
+            question = question_form.save()
+            formset = AnswerFormSet(request.POST, instance=question)
+            if formset.is_valid():
+                formset.save()
+                return redirect('test_list')  # Создайте в urls.py и template страницу с тестами
+            else:
+                # если formset невалиден, показываем ошибки
+                question.delete()  # очищаем вопрос, если ответы невалидны
         else:
-            answer_formset = AnswerFormSet(request.POST)
+            formset = AnswerFormSet(request.POST)
     else:
-        form = QuestionForm()
-        answer_formset = AnswerFormSet()
+        question_form = QuestionForm()
+        formset = AnswerFormSet()
 
-    return render(request, 'mainpage/create_question.html', {
-    
-        'form': form,
-        'answer_formset': answer_formset,
+    return render(request, 'mainpage/create_test.html', {
+        'question_form': question_form,
+        'formset': formset
     })
 
+# mainpage/views.py
 
-# views.py
-from django.shortcuts import render, get_object_or_404
-from .models import Test, Question, Answer
-from .forms import TestTakeForm
+from django.shortcuts import render
+from .models import Question
 
-def take_test(request, test_id):
-    test = get_object_or_404(Test, id=test_id)
-    questions = test.questions.prefetch_related('answers')
-
-    if request.method == 'POST':
-        form = TestTakeForm(request.POST, questions=questions)
-        if form.is_valid():
-            score = 0
-            total = questions.count()
-
-            for question in questions:
-                user_answers = form.cleaned_data.get(f'question_{question.id}')
-
-                # Для single choice приведем к списку для удобства сравнивать
-                if question.question_type == Question.SINGLE_CHOICE:
-                    user_answers = [int(user_answers)]
-                else:
-                    user_answers = list(map(int, user_answers))
-
-                correct_answers = list(
-                    question.answers.filter(is_correct=True).values_list('id', flat=True)
-                )
-
-                # Сравним множества — они должны совпадать полностью
-                if set(user_answers) == set(correct_answers):
-                    score += 1
-
-            return render(request, 'yourapp/test_result.html', {
-                'test': test,
-                'score': score,
-                'total': total,
-            })
-    else:
-        form = TestTakeForm(questions=questions)
-
-    return render(request, 'yourapp/take_test.html', {
-        'test': test,
-        'form': form,
-    })
+def test_list(request):
+    questions = Question.objects.prefetch_related('answers').all()
+    return render(request, 'mainpage/test_list.html', {'questions': questions})
 # ------------------------------------------------------------------------------- #
 # @login_required
 # def teacher_profile(request):

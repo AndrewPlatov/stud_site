@@ -24,7 +24,8 @@
         <li>Email: {{ user.email }}</li>
         <li>Имя пользователя: {{ user.username }}</li>
     </ul>
-    <a href="{% url 'create_question' %}" class="nav-link">SUFFER</a>
+    <a href="{% url 'create_test' %}" class="nav-link">Создать тест</a>
+    <a href="{% url 'test_list' %}" class="nav-link">Список тестов</a>
 </body>
 </html>
 

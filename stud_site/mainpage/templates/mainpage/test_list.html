@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Список тестов</title>
+</head>
+<body>
+    <h1>Список вопросов с правильными ответами</h1>
+
+    <a href="{% url 'create_test' %}">Создать новый тест</a>
+
+    <ul>
+        {% for question in questions %}
+            <li>
+                <strong>Вопрос:</strong> {{ question.text }}
+
+                <ul>
+                    {% for answer in question.answers.all %}
+                        <li{% if answer.is_correct %} style="font-weight: bold; color: green;"{% endif %}>
+                            {{ answer.text }} {% if answer.is_correct %}(Правильный ответ){% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </li>
+        {% empty %}
+            <li>Пока нет вопросов</li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'teacher_profile' %}" class="nav-link">В профиль</a>
+</body>
+</html>

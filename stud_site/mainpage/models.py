@@ -37,38 +37,20 @@ def create_user_profile(sender, instance, created, **kwargs):
         Profile.objects.create(user=instance)
         
 
-# models.py
+# mainpage/models.py
+
 from django.db import models
 
-class Test(models.Model):
-    title = models.CharField(max_length=255)
-    description = models.TextField(blank=True)
-
-    def __str__(self):
-        return self.title
-
-
 class Question(models.Model):
-    SINGLE_CHOICE = 'single'
-    MULTIPLE_CHOICE = 'multiple'
-
-    QUESTION_TYPES = [
-        (SINGLE_CHOICE, 'Один ответ'),
-        (MULTIPLE_CHOICE, 'Несколько ответов'),
-    ]
-
-    test = models.ForeignKey(Test, related_name='questions', on_delete=models.CASCADE)
-    text = models.TextField()
-    question_type = models.CharField(max_length=10, choices=QUESTION_TYPES, default=SINGLE_CHOICE)
+    text = models.CharField(max_length=255)
 
     def __str__(self):
         return self.text
 
-
 class Answer(models.Model):
-    question = models.ForeignKey(Question, related_name='answers', on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='answers')
     text = models.CharField(max_length=255)
     is_correct = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"{self.text} ({'Правильный' if self.is_correct else 'Неправильный'})"
+        return f"{self.text} ({'correct' if self.is_correct else 'incorrect'})"

@@ -1,0 +1,19 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Пройти тест: {{ test.title }}</title>
+</head>
+<body>
+<h1>{{ test.title }}</h1>
+<p>{{ test.description }}</p>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Отправить ответы</button>
+</form>
+
+</body>
+</html>

@@ -80,6 +80,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'questions',
         'USER': 'student',
+        'CONN_MAX_AGE': 0,
         
     }
 }

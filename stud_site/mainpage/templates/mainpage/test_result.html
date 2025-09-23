@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Результат теста: {{ test.title }}</title>
+</head>
+<body>
+<h1>Результат: {{ test.title }}</h1>
+<p>Правильных ответов: {{ score }} из {{ total }}</p>
+<p>Процент: {{ score|floatformat:2|divisibleby:total|floatformat:2 }}%</p>
+<a href="{% url 'take_test' test.id %}">Пройти тест еще раз</a>
+</body>
+</html>

@@ -5,27 +5,18 @@
     <title>Список тестов</title>
 </head>
 <body>
-    <h1>Список вопросов с правильными ответами</h1>
+    <h1>Список тестов</h1> 
 
-    <a href="{% url 'create_test' %}">Создать новый тест</a>
-
-    <ul>
-        {% for question in questions %}
-            <li>
-                <strong>Вопрос:</strong> {{ question.text }}
-
-                <ul>
-                    {% for answer in question.answers.all %}
-                        <li{% if answer.is_correct %} style="font-weight: bold; color: green;"{% endif %}>
-                            {{ answer.text }} {% if answer.is_correct %}(Правильный ответ){% endif %}
-                        </li>
-                    {% endfor %}
-                </ul>
-            </li>
-        {% empty %}
-            <li>Пока нет вопросов</li>
-        {% endfor %}
-    </ul>
+<ul>
+    {% for test in tests %}
+        <li>
+            {{ test.name }} — <a href="{% url 'take_test' test.id %}">Пройти тест</a>
+        </li>
+    {% empty %}
+        <li>Пока нет тестов</li>
+    {% endfor %}
+</ul>
     <a href="{% url 'teacher_profile' %}" class="nav-link">В профиль</a>
+    <a href="{% url 'merge_test' %}" class="nav-link">Обьединить тесты в один</a>
 </body>
 </html>

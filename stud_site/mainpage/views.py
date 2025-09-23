@@ -329,6 +329,108 @@ from .models import Question
 def test_list(request):
     questions = Question.objects.prefetch_related('answers').all()
     return render(request, 'mainpage/test_list.html', {'questions': questions})
+
+from django.shortcuts import render, redirect, get_object_or_404
+from mainpage.forms import TestCreateForm  # импорт формы с учетом изменений
+
+def merge_test(request):
+    if request.method == 'POST':
+        form = TestCreateForm(request.POST)
+        if form.is_valid():
+            test = form.save()
+            return redirect('take_test', test_id=test.id)
+    else:
+        form = TestCreateForm()
+    return render(request, 'mainpage/merge_test.html', {'form': form})
+
+def take_test(request, test_id):
+    test = get_object_or_404(Test, id=test_id)
+    questions = test.questions.all()
+    result = None
+
+    if request.method == 'POST':
+        user_answers = {}
+        for question in questions:
+            ans_id = request.POST.get(f'question_{question.id}')
+            if ans_id:
+                user_answers[question.id] = int(ans_id)
+
+        total_questions = questions.count()
+        correct_count = 0
+
+        for question in questions:
+            correct_answers = question.answer_set.filter(is_correct=True).values_list('id', flat=True)
+            selected = user_answers.get(question.id)
+            if selected in correct_answers:
+                correct_count += 1
+
+        result = {
+            'total': total_questions,
+            'correct': correct_count,
+            'percent': round(correct_count / total_questions * 100, 2) if total_questions else 0,
+        }
+
+    return render(request, 'mainpage/take_test.html', {
+        'test': test,
+        'questions': questions,
+        'result': result,
+    })
+
+from django.shortcuts import render
+from mainpage.models import Test, Question
+
+def main(request):
+    test = Test.objects.last()
+    questions = test.questions.all() if test else []
+    result = None
+
+    if request.method == 'POST' and test:
+        # Собираем ответы пользователя из POST
+        user_answers = {}  # {question_id: answer_id}
+        for question in questions:
+            ans_id = request.POST.get(f'question_{question.id}')
+            if ans_id:
+                user_answers[question.id] = int(ans_id)
+
+        # Подсчет правильных ответов
+        total_questions = questions.count()
+        correct_count = 0
+
+        for question in questions:
+            correct_answers = question.answer_set.filter(is_correct=True).values_list('id', flat=True)
+            selected = user_answers.get(question.id)
+
+            # Для теста с одним правильным вариантом:
+            if selected in correct_answers:
+                correct_count += 1
+
+        result = {
+            'total': total_questions,
+            'correct': correct_count,
+            'percent': round(correct_count / total_questions * 100, 2) if total_questions > 0 else 0,
+        }
+
+    return render(request, 'mainpage/main.html', {
+        'test': test,
+        'questions': questions,
+        'result': result,
+    })
+    
+from mainpage.models import Test
+
+def test_list(request):
+    tests = Test.objects.all()
+    return render(request, 'mainpage/test_list.html', {'tests': tests})
+
+
+def take_test(request, test_id):
+    test = Test.objects.get(id=test_id)
+    questions = test.questions.prefetch_related('answers').all()  # assuming related_name='questions' и 'answers'
+
+    return render(request, 'mainpage/take_test.html', {
+        'test': test,
+        'questions': questions,
+    })
 # ------------------------------------------------------------------------------- #
 # @login_required
 # def teacher_profile(request):

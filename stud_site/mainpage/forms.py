@@ -91,3 +91,17 @@ AnswerFormSet = inlineformset_factory(
     min_num=1,
     validate_min=True
 )
+
+
+from django import forms
+from mainpage.models import Question, Answer, Test
+
+class TestCreateForm(forms.ModelForm):
+    questions = forms.ModelMultipleChoiceField(
+        queryset=Question.objects.all(),
+        widget=forms.CheckboxSelectMultiple
+    )
+    
+    class Meta:
+        model = Test
+        fields = ['title', 'questions']

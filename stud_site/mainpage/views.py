@@ -167,14 +167,33 @@ def update_profile(request):
     # На GET запрос - просто перенаправление или форма с текущими данными
     return render(request, 'mainpage/student_cabinet.html')
 
-@login_required
+
+from django.shortcuts import redirect
+from django.urls import reverse
+from functools import wraps
+
+def teacher_login_required(view_func):
+    @wraps(view_func)
+    def wrapper(request, *args, **kwargs):
+        user = request.user
+        if not user.is_authenticated:
+            return redirect(reverse('teacher_login'))  # заменить на ваше имя url логина
+
+        # Проверяем атрибут или группу, которая подтверждает, что пользователь - учитель
+        if not getattr(user, 'is_teacher', False):
+            return redirect(reverse('not_authorized'))  # или другая страница
+
+        return view_func(request, *args, **kwargs)
+    return wrapper
+
+@teacher_login_required
 def homework_upload(request):
     if request.method == 'POST':
         # логика обработки файла
         pass
     return render(request, 'mainpage/homework_upload.html')
 
-@login_required
+@teacher_login_required
 def homework_download(request):
     # логика поиска файла и отдачи пользователю
     pass
@@ -268,10 +287,11 @@ def teacher_register(request):
 
 from django.contrib.auth.decorators import login_required
 
-@login_required
+@teacher_login_required
 def teacher_profile(request):
     # можно добавить логику, если нужно отобразить данные учителя
     return render(request, 'mainpage/teacher_profile.html', {'user': request.user})
+
 
 def teacher_login(request):
     if request.method == 'POST':
@@ -495,6 +515,34 @@ def student_test_list(request):
         'tests': tests,
     }
     return render(request, 'mainpage/student_test_list.html', context)
+    
+
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+from .forms import UserEditForm, ProfileEditForm
+
+@login_required(login_url='teacher_login')
+def edit_teacher_profile(request):
+    user = request.user
+    profile = user.profile
+
+    if request.method == 'POST':
+        user_form = UserEditForm(request.POST, instance=user)
+        profile_form = ProfileEditForm(request.POST, request.FILES, instance=profile)
+        
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+            return redirect('teacher_profile')
+    else:
+        user_form = UserEditForm(instance=user)
+        profile_form = ProfileEditForm(instance=profile)
+
+    context = {
+        'user_form': user_form,
+        'profile_form': profile_form,
+    }
+    return render(request, 'mainpage/edit_teacher_profile.html', context)
 # ------------------------------------------------------------------------------- #
 # @login_required
 # def teacher_profile(request):

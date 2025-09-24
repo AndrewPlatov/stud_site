@@ -1,4 +1,99 @@
 {% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <title>Личный кабинет преподавателя</title>
+    <link rel="stylesheet" href="{% static 'mainpage/css/style_cabinet.css' %}">
+</head>
+<body>
+
+    <header class="page-header">
+        <div class="container">
+            <nav>
+                <a href="{% url 'home' %}" class="nav-link">Главная</a>
+            
+            </nav>
+        </div>
+    </header>
+
+    <h1>Добро пожаловать в личный кабинет преподавателя</h1>
+    <p>Здесь отображается информация и настройки преподавателя.</p>
+
+    {% if messages %}
+        <ul style="color:green;">
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <h2>Редактировать профиль</h2>
+    <form method="post" enctype="multipart/form-data" action="{% url 'update_profile' %}">
+        {% csrf_token %}
+
+        <label for="name">Имя:</label>
+        <input type="text" id="name" name="name" value="{{ profile.name }}" required><br><br>
+
+        <label for="lastname">Фамилия:</label>
+        <input type="text" id="lastname" name="lastname" value="{{ profile.lastname }}" required><br><br>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" value="{{ user.email }}" required><br><br>
+
+        <label for="photo">Фото:</label>
+        <input type="file" id="photo" name="photo" accept="image/*"><br><br>
+
+        {% if profile.photo %}
+            <img src="{{ profile.photo.url }}" alt="Ваше фото" id="photo-preview" />
+        {% else %}
+            <img src="{% static 'mainpage/img/default_user_photo.png' %}" alt="Фото отсутствует" id="photo-preview" />
+        {% endif %}
+
+        <button type="submit">Сохранить изменения</button>
+    </form>
+
+    <h2>Система тестирования</h2>
+    <ul>
+        <li><a href="{% url 'mainpage' %}">NULL Результаты тестов NULL</a></li>
+        <li> <a href="{% url 'create_test' %}" class="nav-link">Создать тест</a></li>
+        <li><a href="{% url 'test_list' %}" class="nav-link">Список тестов</a></li>
+        <li><a href="{% url 'edit_test' %}" class="nav-link">Редактировать тесты</a></li>
+        <li> <a href="{% url 'merge_test' %}" class="nav-link">Объединить тесты в один</a></li>
+    </ul>
+
+    <h2>Домашние задания</h2>
+    <ul>
+        <li><a href="{% url 'homework_upload' %}">Загрузить домашнее задание</a></li>
+        <li><a href="{% url 'homework_download' %}">Скачать домашнее задание</a></li>
+    </ul>
+
+    <form action="{% url 'logout' %}" method="post">
+        {% csrf_token %}
+        <button type="submit">Выйти</button>
+    </form>
+
+    <script>
+    document.getElementById('photo').addEventListener('change', function(event) {
+        const [file] = this.files;
+        if (file) {
+            const preview = document.getElementById('photo-preview');
+            preview.src = URL.createObjectURL(file);
+        }
+    });
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+{% comment %} {% load static %}
 
 <!DOCTYPE html>
 <html lang="ru">
@@ -13,11 +108,24 @@
         <div class="container">
             <nav>
                 <a href="{% url 'home' %}" class="nav-link">Главная</a>
+                <a href="{% url 'create_test' %}" class="nav-link">Создать тест</a>
+                <a href="{% url 'test_list' %}" class="nav-link">Список тестов</a>
+                <a href="{% url 'edit_test' %}" class="nav-link">Редактировать тесты</a>
+                <a href="{% url 'merge_test' %}" class="nav-link">Объединить тесты в один</a>
             </nav>
         </div>
     </header> 
     
     <h1>Добро пожаловать в личный кабинет, {{ user.first_name }}!</h1>
+
+    {% if user.profile.photo %}
+        <div class="profile-photo">
+            <img src="{{ user.profile.photo.url }}" alt="Фото {{ user.first_name }}" style="max-width: 150px; border-radius: 8px;">
+        </div>
+    {% else %}
+        <p>Фото пользователя отсутствует.</p>
+    {% endif %}
+
     <p>Ваши данные:</p>
     <ul>
         <li>Имя: {{ user.first_name }}</li>
@@ -25,9 +133,14 @@
         <li>Email: {{ user.email }}</li>
         <li>Имя пользователя: {{ user.username }}</li>
     </ul>
-    <a href="{% url 'create_test' %}" class="nav-link">Создать тест</a>
+
+    <a href="{% url 'edit_teacher_profile' %}" class="nav-link">Редактировать данные</a>
+    <br>
+
+    {% comment %} <a href="{% url 'create_test' %}" class="nav-link">Создать тест</a>
     <a href="{% url 'test_list' %}" class="nav-link">Список тестов</a>
     <a href="{% url 'edit_test' %}" class="nav-link">Редактировать тесты</a>
-    <a href="{% url 'merge_test' %}" class="nav-link">Обьединить тесты в один</a>
-</body>
-</html>
+    <a href="{% url 'merge_test' %}" class="nav-link">Объединить тесты в один</a> {% endcomment %}
+
+{% comment %} </body>
+</html> {% endcomment %}

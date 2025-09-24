@@ -1,83 +1,179 @@
+/* Сброс и базовые стили */
+* {
+    box-sizing: border-box;
+}
+
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #f9fafb;
-    color: #333;
-    margin: 0;
-    padding: 40px 0;
-}
-
-.container {
-    width: 400px;
-    margin: 0 auto;
-    background: #fff;
-    padding: 30px 40px;
-    border-radius: 8px;
-    box-shadow: 0 2px 15px rgba(0,0,0,0.1);
-}
-
-h1 {
-    margin-bottom: 25px;
+    background: #f4f7fc;
     color: #2c3e50;
-    text-align: center;
+    margin: 0;
+    padding: 20px;
+    min-height: 100vh;
 }
 
-.profile-form label {
-    display: block;
-    margin-bottom: 6px;
+/* Контейнер для центровки содержимого */
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+/* Шапка */
+.page-header {
+    background-color: #34495e;
+    padding: 15px 0;
+    margin-bottom: 40px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.page-header nav {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.page-header .nav-link {
+    color: #ecf0f1;
+    text-decoration: none;
     font-weight: 600;
-    color: #34495e;
+    padding: 10px 18px;
+    border-radius: 30px;
+    background-color: transparent;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    font-size: 16px;
 }
 
-.profile-form input {
-    width: 100%;
-    padding: 10px 12px;
-    margin-bottom: 18px;
-    border: 1.5px solid #bdc3c7;
-    border-radius: 4px;
-    font-size: 14px;
-    transition: border-color 0.2s ease-in-out;
-}
-
-.profile-form input:focus {
-    border-color: #3498db;
+.page-header .nav-link:hover,
+.page-header .nav-link:focus {
+    background-color: #1abc9c;
+    color: #fff;
     outline: none;
 }
 
-button {
-    width: 100%;
-    padding: 12px;
-    background-color: #3498db;
-    color: white;
-    border: none;
-    border-radius: 5px;
+/* Заголовок */
+h1 {
+    font-size: 2.6rem;
+    text-align: center;
+    margin-bottom: 30px;
+    color: #1a1a1a;
     font-weight: 700;
-    font-size: 16px;
+}
+
+/* Фото профиля */
+.profile-photo {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
+}
+
+.profile-photo img {
+    max-width: 150px;
+    max-height: 150px;
+    border-radius: 15px;
+    box-shadow: 0 6px 15px rgba(26, 188, 156, 0.3);
+    transition: transform 0.3s ease;
+    object-fit: cover;
+}
+
+.profile-photo img:hover {
+    transform: scale(1.07);
+}
+
+/* Сообщение об отсутствии фото */
+p {
+    text-align: center;
+    color: #7f8c8d;
+    font-style: italic;
+    margin-bottom: 30px;
+    font-size: 1.1rem;
+}
+
+/* Блок с данными пользователя */
+p + ul {
+    max-width: 450px;
+    margin: 0 auto 40px;
+    background: #fff;
+    border-radius: 15px;
+    padding: 20px 25px;
+    box-shadow: 0 4px 12px rgb(0 0 0 / 0.05);
+    list-style: none;
+}
+
+ul li {
+    padding: 10px 5px;
+    font-size: 1.15rem;
+    color: #34495e;
+    border-bottom: 1px solid #ecf0f1;
+}
+
+ul li:last-child {
+    border-bottom: none;
+}
+
+/* Кнопка "Редактировать данные" */
+a.nav-link {
+    display: inline-block;
+    background-color: #1abc9c;
+    color: white !important;
+    padding: 12px 28px;
+    border-radius: 40px;
+    font-weight: 700;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(26, 188, 156, 0.6);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    font-size: 1.1rem;
+    margin-left: auto;
+    margin-right: auto;
     cursor: pointer;
-    transition: background-color 0.25s ease;
+    text-decoration: none;
 }
 
-button:hover {
-    background-color: #2980b9;
+a.nav-link:hover,
+a.nav-link:focus {
+    background-color: #16a085;
+    box-shadow: 0 6px 20px rgba(22, 160, 133, 0.8);
+    outline: none;
 }
 
-.messages {
-    margin-top: 20px;
-    list-style-type: none;
-    padding: 0;
+/* Отступ между кнопкой и остальным содержимым */
+a.nav-link + br {
+    margin-bottom: 25px;
 }
 
-.messages li {
-    padding: 10px;
-    border-radius: 4px;
-    margin-bottom: 10px;
-}
+/* Адаптив для мобильных устройств */
+@media (max-width: 600px) {
+    body {
+        padding: 12px 15px;
+    }
 
-.messages li.success {
-    background-color: #dff0d8;
-    color: #3c763d;
-}
+    .page-header nav {
+        gap: 10px;
+        flex-direction: column;
+        align-items: center;
+    }
 
-.messages li.error {
-    background-color: #f2dede;
-    color: #a94442;
+    .page-header .nav-link {
+        width: 100%;
+        text-align: center;
+        font-size: 18px;
+    }
+
+    h1 {
+        font-size: 2rem;
+        margin-bottom: 25px;
+    }
+
+    ul,
+    a.nav-link {
+        width: 100%;
+        max-width: none;
+    }
+
+    a.nav-link {
+        padding: 14px 0;
+        font-size: 1.2rem;
+        border-radius: 30px;
+    }
 }

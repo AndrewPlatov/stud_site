@@ -1,0 +1,28 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Редактирование профиля учителя</title>
+    <link rel="stylesheet" href="{% static 'mainpage/css/style_profile.css' %}">
+</head>
+<body>
+    <h1>Редактирование профиля</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <fieldset>
+            <legend>Данные пользователя</legend>
+            {{ user_form.as_p }}
+        </fieldset>
+        <fieldset>
+            <legend>Фото профиля</legend>
+            {{ profile_form.as_p }}
+            {% if user.profile.photo %}
+                <img src="{{ user.profile.photo.url }}" alt="Фото профиля" style="max-width: 150px; border-radius: 8px;">
+            {% endif %}
+        </fieldset>
+        <button type="submit">Сохранить изменения</button>
+    </form>
+    <a href="{% url 'teacher_profile' %}">Назад в профиль</a>
+</body>
+</html>

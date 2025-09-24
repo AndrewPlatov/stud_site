@@ -113,3 +113,24 @@ class TestCreateForm(forms.ModelForm):
     class Meta:
         model = Test
         fields = ['title', 'questions']
+        
+from django import forms
+from django.contrib.auth.models import User
+from .models import Profile  # модель профиля с фото, если есть
+
+class UserEditForm(forms.ModelForm):
+    first_name = forms.CharField(label='Имя', max_length=30, required=True)
+    last_name = forms.CharField(label='Фамилия', max_length=30, required=True)
+    email = forms.EmailField(label='Электронная почта', required=True)
+
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email']
+
+
+class ProfileEditForm(forms.ModelForm):
+    photo = forms.ImageField(label='Фото профиля', required=False)
+
+    class Meta:
+        model = Profile
+        fields = ['photo']

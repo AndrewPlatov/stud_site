@@ -1,8 +1,10 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
     <title>Список тестов</title>
+    <link rel="stylesheet" href="{% static 'mainpage/css/style_list.css' %}">
 </head>
 <body>
     <h1>Список тестов</h1> 
@@ -10,7 +12,8 @@
 <ul>
     {% for test in tests %}
         <li>
-            {{ test.title }} — <a href="{% url 'take_test' test.id %}">Пройти тест</a> — 
+            <span class="title">{{ test.title }}</span>
+            <a href="{% url 'take_test' test.id %}">Пройти тест</a>
             <a href="{% url 'delete_test' test.id %}">Удалить</a>
         </li>
     {% empty %}
@@ -19,5 +22,6 @@
 </ul>
     <a href="{% url 'teacher_profile' %}" class="nav-link">В профиль</a>
     <a href="{% url 'merge_test' %}" class="nav-link">Обьединить тесты в один</a>
+    <a href="{% url 'edit_test' %}" class="nav-link">Редактировать тесты</a>
 </body>
 </html>

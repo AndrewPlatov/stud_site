@@ -5,6 +5,7 @@
 <head>
     <meta charset="UTF-8" />
     <title>Личный кабинет учителя</title>
+    <link rel="stylesheet" href="{% static 'mainpage/css/style_profile.css' %}">
 </head>
 <body>
 
@@ -26,6 +27,7 @@
     </ul>
     <a href="{% url 'create_test' %}" class="nav-link">Создать тест</a>
     <a href="{% url 'test_list' %}" class="nav-link">Список тестов</a>
+    <a href="{% url 'edit_test' %}" class="nav-link">Редактировать тесты</a>
     <a href="{% url 'merge_test' %}" class="nav-link">Обьединить тесты в один</a>
 </body>
 </html>

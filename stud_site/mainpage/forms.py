@@ -76,6 +76,13 @@ class QuestionForm(forms.ModelForm):
     class Meta:
         model = Question
         fields = ['text']
+        widgets = {
+            'text': forms.Textarea(attrs={
+                'class': 'big-question-field',
+                'rows': 6,
+                'placeholder': 'Введите текст вопроса здесь...'
+            }),
+        }
 
 class AnswerForm(forms.ModelForm):
     class Meta:

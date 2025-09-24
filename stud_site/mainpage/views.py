@@ -306,7 +306,7 @@ def create_test(request):
             formset = AnswerFormSet(request.POST, instance=question)
             if formset.is_valid():
                 formset.save()
-                return redirect('test_list')  # Создайте в urls.py и template страницу с тестами
+                return redirect('test_list')
             else:
                 # если formset невалиден, показываем ошибки
                 question.delete()  # очищаем вопрос, если ответы невалидны
@@ -338,7 +338,7 @@ def merge_test(request):
         form = TestCreateForm(request.POST)
         if form.is_valid():
             test = form.save()
-            return redirect('take_test', test_id=test.id)
+            return redirect('test_list')
     else:
         form = TestCreateForm()
     return render(request, 'mainpage/merge_test.html', {'form': form})
@@ -441,6 +441,47 @@ def take_test(request, test_id):
         'test': test,
         'questions': questions,
     })
+
+def edit_test(request):
+    questions = Question.objects.all()  # либо фильтровать по нужному тесту
+    return render(request, 'mainpage/edit_test.html', {'questions': questions})
+
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import Question
+
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import Question, Answer  # предположим, есть модель Answer для ответов
+from .forms import QuestionForm, AnswerFormSet  # предположим, что у вас есть формы
+
+def question_edit(request, pk):
+    question = get_object_or_404(Question, pk=pk)
+    if request.method == 'POST':
+        question_form = QuestionForm(request.POST, instance=question)
+        formset = AnswerFormSet(request.POST, instance=question)
+        if question_form.is_valid() and formset.is_valid():
+            question_form.save()
+            formset.save()
+            return redirect('test_list')  # перенаправить на список тестов или нужную страницу
+    else:
+        question_form = QuestionForm(instance=question)
+        formset = AnswerFormSet(instance=question)
+
+    return render(request, 'mainpage/create_test.html', {
+        'question_form': question_form,
+        'formset': formset,
+        'is_edit': True,  # если хотите показать заголовок редактирования в шаблоне
+    })
+
+def question_delete(request, pk):
+    question = get_object_or_404(Question, pk=pk)
+    if request.method == 'POST':
+        question.delete()
+        return redirect('edit_test')  # перенаправить обратно на список
+    return render(request, 'mainpage/question_confirm_delete.html', {'question': question})
+
+def question_create(request):
+    # Логика создания вопроса
+    return render(request, 'mainpage/question_create.html')
 # ------------------------------------------------------------------------------- #
 # @login_required
 # def teacher_profile(request):

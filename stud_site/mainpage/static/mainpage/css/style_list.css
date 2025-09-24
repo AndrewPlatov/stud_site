@@ -1,0 +1,87 @@
+/* Общее оформление страницы */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f9fafb;
+    color: #333;
+    max-width: 700px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+/* Заголовок */
+h1 {
+    font-weight: 700;
+    font-size: 2.5rem;
+    color: #222;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+/* Список тестов */
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 40px 0;
+    border-top: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgb(0 0 0 / 0.1);
+}
+
+/* Каждый элемент списка */
+ul li {
+    padding: 15px 20px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Последний элемент без нижней границы */
+ul li:last-child {
+    border-bottom: none;
+}
+
+/* Название теста */
+ul li > span.title {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #333;
+    flex-grow: 1;
+}
+
+/* Ссылки внутри пункта */
+ul li a {
+    color: #0066cc;
+    text-decoration: none;
+    font-weight: 500;
+    margin-left: 15px;
+    transition: color 0.3s ease;
+}
+
+/* При наведении на ссылки */
+ul li a:hover {
+    color: #004999;
+    text-decoration: underline;
+}
+
+/* Навигационные ссылки снизу объекта */
+.nav-link {
+    display: inline-block;
+    margin-right: 25px;
+    font-weight: 600;
+    color: #0055aa;
+    text-decoration: none;
+    font-size: 1rem;
+    padding: 8px 16px;
+    border: 2px solid transparent;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+/* Hover для навигационных ссылок */
+.nav-link:hover {
+    background-color: #0055aa;
+    color: #fff;
+    border-color: #004080;
+}

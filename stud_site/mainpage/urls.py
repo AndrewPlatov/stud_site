@@ -19,6 +19,16 @@ urlpatterns = [
     path('merge_test/', views.merge_test, name='merge_test'), 
     path('test/<int:test_id>/take/', views.take_test, name='take_test'),
     path('test/<int:test_id>/delete/', views.delete_test, name='delete_test'),
+    path('edit_test/', views.edit_test, name='edit_test'),
+    # Путь для редактирования вопроса (пример)
+    path('question/<int:pk>/edit/', views.question_edit, name='question_edit'),
+
+    # Аналогично для удаления вопроса (если есть)
+    path('question/<int:pk>/delete/', views.question_delete, name='question_delete'),
+
+    # Путь для создания вопроса
+    path('question/create/', views.question_create, name='question_create'),
+
     path('test3/', views.test3, name='test3'),
     path('check/', views.check, name='check'),
     path('student_cabinet/', views.student_cabinet, name='student_cabinet'),

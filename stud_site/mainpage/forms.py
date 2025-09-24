@@ -99,7 +99,8 @@ from mainpage.models import Question, Answer, Test
 class TestCreateForm(forms.ModelForm):
     questions = forms.ModelMultipleChoiceField(
         queryset=Question.objects.all(),
-        widget=forms.CheckboxSelectMultiple
+        widget=forms.CheckboxSelectMultiple,
+        required=False
     )
     
     class Meta:

@@ -342,6 +342,16 @@ def merge_test(request):
     else:
         form = TestCreateForm()
     return render(request, 'mainpage/merge_test.html', {'form': form})
+    
+from mainpage.models import Test
+
+def delete_test(request, test_id):
+    test = get_object_or_404(Test, id=test_id)
+    if request.method == 'POST':
+        test.delete()
+        return redirect('test_list')
+    return render(request, 'mainpage/confirm_delete.html', {'test': test})
+
 
 def take_test(request, test_id):
     test = get_object_or_404(Test, id=test_id)

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <title>Подтверждение удаления</title>
+</head>
+<body>
+    <h1>Удалить тест "{{ test.title }}"?</h1>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">Подтвердить удаление</button>
+        <a href="{% url 'test_list' %}">Отмена</a>
+    </form>
+</body>
+</html>

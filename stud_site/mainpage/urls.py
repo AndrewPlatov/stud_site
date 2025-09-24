@@ -28,6 +28,8 @@ urlpatterns = [
 
     # Путь для создания вопроса
     path('question/create/', views.question_create, name='question_create'),
+    
+    path('student/tests/', views.student_test_list, name='student_test_list'),
 
     path('test3/', views.test3, name='test3'),
     path('check/', views.check, name='check'),

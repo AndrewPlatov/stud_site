@@ -482,6 +482,19 @@ def question_delete(request, pk):
 def question_create(request):
     # Логика создания вопроса
     return render(request, 'mainpage/question_create.html')
+
+
+from django.shortcuts import render
+from .models import Test  # или как у вас называется модель с тестами
+
+def student_test_list(request):
+    # Получаем список тестов (возможно, фильтруете по условиям)
+    tests = Test.objects.all()
+
+    context = {
+        'tests': tests,
+    }
+    return render(request, 'mainpage/student_test_list.html', context)
 # ------------------------------------------------------------------------------- #
 # @login_required
 # def teacher_profile(request):

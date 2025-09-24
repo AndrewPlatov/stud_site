@@ -17,28 +17,3 @@
     {% endfor %}
     <button type="submit">Отправить ответы</button>
 </form>
-
-{% comment %} <h1>{{ test.title }}</h1>
-
-{% if result %}
-  <h2>Результат теста</h2>
-  <p>Правильных ответов: {{ result.correct }} из {{ result.total }} ({{ result.percent }}%)</p>
-  <hr>
-{% endif %}
-
-<form method="post">
-  {% csrf_token %}
-  {% for question in questions %}
-    <div>
-      <p>{{ question.text }}</p>
-      {% for answer in question.answer_set.all %}
-        <label>
-          <input type="radio" name="question_{{ question.id }}" value="{{ answer.id }}">
-          {{ answer.text }}
-        </label><br>
-      {% endfor %}
-    </div>
-  {% endfor %}
-
-  <button type="submit">Отправить ответы</button>
-</form> {% endcomment %}

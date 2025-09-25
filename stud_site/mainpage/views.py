@@ -568,3 +568,114 @@ def edit_teacher_profile(request):
 
 #     return render(request, 'mainpage/teacher_profile.html')
 
+from django.shortcuts import render, get_object_or_404
+from .models import Test, Question, Answer
+
+def take_test(request, test_id):
+    test = get_object_or_404(Test, id=test_id)
+    questions = test.questions.all()
+
+    if request.method == 'POST':
+        results = []
+        total_questions = questions.count()
+        correct_count = 0
+        wrong_count = 0
+
+        for question in questions:
+            selected_answer_ids = request.POST.getlist(f'question_{question.id}')
+            selected_answer_ids_set = set(int(id) for id in selected_answer_ids)
+
+            correct_answers = question.answers.filter(is_correct=True)
+            correct_answer_ids = set(correct_answers.values_list('id', flat=True))
+
+            # Считаем верно только если выбран набор ответов полностью совпадает с правильным
+            if selected_answer_ids_set == correct_answer_ids:
+                correct = True
+                correct_count += 1
+            else:
+                correct = False
+                wrong_count += 1
+
+            selected_answers_text = [answer.text for answer in question.answers.filter(id__in=selected_answer_ids_set)]
+            correct_answers_text = [answer.text for answer in correct_answers]
+
+            results.append({
+                'question': question.text,
+                'selected_answers': selected_answers_text,
+                'correct_answers': correct_answers_text,
+                'is_correct': correct,
+            })
+
+        percent = (correct_count / total_questions) * 100 if total_questions else 0
+
+        return render(request, 'mainpage/test_result.html', {
+            'test': test,
+            'results': results,
+            'correct_count': correct_count,
+            'wrong_count': wrong_count,
+            'percent': percent,
+            'total': total_questions,
+        })
+    else:
+        # GET — вывод формы
+        return render(request, 'mainpage/take_test.html', {
+            'test': test,
+            'questions': questions,
+        })
+        
+
+
+def test_result(request):
+    user_answers = request.session.get('user_answers')
+    test_id = request.session.get('test_id')
+
+    if not user_answers or not test_id:
+        # Если нет данных — редирект на список тестов или на главную
+        return redirect('test_list')
+
+    test = get_object_or_404(Test, id=test_id)
+    questions = test.questions.all()
+
+    results = []
+    total_questions = questions.count()
+    correct_count = 0
+    wrong_count = 0
+
+    for question in questions:
+        selected_answer_ids = user_answers.get(str(question.id), [])
+        selected_answer_ids_set = set(int(id) for id in selected_answer_ids)
+
+        correct_answers = question.answers.filter(is_correct=True)
+        correct_answer_ids = set(correct_answers.values_list('id', flat=True))
+
+        if selected_answer_ids_set == correct_answer_ids:
+            correct = True
+            correct_count += 1
+        else:
+            correct = False
+            wrong_count += 1
+
+        selected_answers_text = [answer.text for answer in question.answers.filter(id__in=selected_answer_ids_set)]
+        correct_answers_text = [answer.text for answer in correct_answers]
+
+        results.append({
+            'question': question.text,
+            'selected_answers': selected_answers_text,
+            'correct_answers': correct_answers_text,
+            'is_correct': correct,
+        })
+
+    percent = (correct_count / total_questions) * 100 if total_questions else 0
+
+    # Можно очистить сессию, если нужно
+    # del request.session['user_answers']
+    # del request.session['test_id']
+
+    return render(request, 'maipage/test_result.html', {
+        'test': test,
+        'results': results,
+        'correct_count': correct_count,
+        'wrong_count': wrong_count,
+        'percent': percent,
+        'total': total_questions,
+    })

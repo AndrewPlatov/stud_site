@@ -20,6 +20,7 @@ urlpatterns = [
     path('test/<int:test_id>/take/', views.take_test, name='take_test'),
     path('test/<int:test_id>/delete/', views.delete_test, name='delete_test'),
     path('edit_test/', views.edit_test, name='edit_test'),
+    path('test/result/', views.test_result, name='test_result'),
     # Путь для редактирования вопроса (пример)
     path('question/<int:pk>/edit/', views.question_edit, name='question_edit'),
 

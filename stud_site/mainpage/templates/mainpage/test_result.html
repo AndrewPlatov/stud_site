@@ -1,23 +1,38 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Результаты теста: {{ test.name }}</title>
+    <link rel="stylesheet" href="{% static 'mainpage/css/style_result.css' %}">
+</head>
+<body>
+
 <h1>Результаты теста: {{ test.name }}</h1>
 
-<p>Всего вопросов: {{ total }}</p>
-<p>Правильных ответов: {{ correct_count }}</p>
-<p>Неправильных ответов: {{ wrong_count }}</p>
-<p>Оценка: {{ percent|floatformat:2 }}%</p>
+<div class="result-summary">
+    <p>Всего вопросов: {{ total }}</p>
+    <p>Правильных ответов: {{ correct_count }}</p>
+    <p>Неправильных ответов: {{ wrong_count }}</p>
+    <p>Процент: {{ percent|floatformat:2 }}%</p>
+    <p>Оценка: {{ grade }}</p>
+</div>
 
 <hr>
 
-<ul>
+<ul class="results-list">
 {% for item in results %}
-    <li>
+    <li class="{% if item.is_correct %}correct{% else %}incorrect{% endif %}">
         <strong>Вопрос:</strong> {{ item.question }}<br>
         <strong>Ваш ответ:</strong> {{ item.selected_answers|join:", " }}<br>
         <strong>Правильный ответ:</strong> {{ item.correct_answers|join:", " }}<br>
-        {% if item.is_correct %}
-            <span style="color:green;">Ответ правильный</span>
-        {% else %}
-            <span style="color:red;">Ответ неправильный</span>
-        {% endif %}
+        <span class="answer-status {% if item.is_correct %}correct{% else %}incorrect{% endif %}">
+            {% if item.is_correct %}Ответ правильный{% else %}Ответ неправильный{% endif %}
+        </span>
     </li>
 {% endfor %}
 </ul>
+
+<br>
+
+<a href="{% url 'student_test_list' %}" class="nav-link {% if request.resolver_match.url_name == 'test_list' %}active{% endif %}">К тестам</a>    

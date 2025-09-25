@@ -1,0 +1,76 @@
+/* styles.css */
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    color: #333;
+    padding: 20px;
+}
+
+h1 {
+    color: #2c3e50;
+}
+
+.result-summary p {
+    font-size: 1.1em;
+    margin: 5px 0;
+}
+
+hr {
+    margin: 20px 0;
+    border: none;
+    border-top: 2px solid #eee;
+}
+
+.results-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.results-list li {
+    background-color: #f0f0f0;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* Правильный ответ - зелёный фон и рамка */
+.results-list li.correct {
+    background-color: #d4edda; /* светло-зелёный */
+    border-left: 5px solid #28a745; /* ярко-зелёный слева */
+}
+
+/* Неправильный ответ - красный фон и рамка */
+.results-list li.incorrect {
+    background-color: #f8d7da; /* светло-красный */
+    border-left: 5px solid #dc3545; /* ярко-красный слева */
+}
+
+.answer-status {
+    font-weight: bold;
+    margin-top: 8px;
+}
+
+.answer-status.correct {
+    color: #155724;
+}
+
+.answer-status.incorrect {
+    color: #721c24;
+}
+
+/* Ссылка "К тестам" */
+a.nav-link {
+    text-decoration: none;
+    color: #007bff;
+    font-weight: bold;
+}
+
+a.nav-link:hover {
+    text-decoration: underline;
+}
+
+a.nav-link.active {
+    color: #0056b3;
+}

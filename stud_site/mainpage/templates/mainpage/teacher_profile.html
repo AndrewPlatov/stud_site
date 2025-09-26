@@ -63,59 +63,5 @@
         <button type="submit">Выйти</button>
     </form>
 
-    {% comment %} <h2>Редактировать профиль</h2>
-    <form method="post" enctype="multipart/form-data" action="{% url 'update_profile' %}">
-        {% csrf_token %}
-
-        <label for="name">Имя:</label>
-        <input type="text" id="name" name="name" value="{{ profile.name }}" required><br><br>
-
-        <label for="lastname">Фамилия:</label>
-        <input type="text" id="lastname" name="lastname" value="{{ profile.lastname }}" required><br><br>
-
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" value="{{ user.email }}" required><br><br>
-
-        <label for="photo">Фото:</label>
-        <input type="file" id="photo" name="photo" accept="image/*"><br><br>
-
-        {% if profile.photo %}
-            <img src="{{ profile.photo.url }}" alt="Ваше фото" id="photo-preview" />
-        {% else %}
-            <img src="{% static 'mainpage/img/default_user_photo.png' %}" alt="Фото отсутствует" id="photo-preview" />
-        {% endif %}
-
-        <button type="submit">Сохранить изменения</button>
-    </form>
-
-    <h2>Система тестирования</h2>
-    <ul>
-        <li><a href="{% url 'mainpage' %}">NULL Результаты тестов NULL</a></li>
-        <li> <a href="{% url 'create_test' %}" class="nav-link">Создать вопрос для теста</a></li>
-        <li><a href="{% url 'test_list' %}" class="nav-link">Список тестов</a></li>
-        <li><a href="{% url 'edit_test' %}" class="nav-link">Редактировать вопросы для теста</a></li>
-        <li> <a href="{% url 'merge_test' %}" class="nav-link">Объединить вопросы для тестов в одину форму</a></li>
-    </ul>
-
-    <h2>Домашние задания</h2>
-    <ul>
-        <li><a href="{% url 'homework_upload' %}">Загрузить домашнее задание</a></li>
-        <li><a href="{% url 'homework_download' %}">Скачать домашнее задание</a></li>
-    </ul>
-
-    <form action="{% url 'logout' %}" method="post">
-        {% csrf_token %}
-        <button type="submit">Выйти</button>
-    </form>
-
-    <script>
-    document.getElementById('photo').addEventListener('change', function(event) {
-        const [file] = this.files;
-        if (file) {
-            const preview = document.getElementById('photo-preview');
-            preview.src = URL.createObjectURL(file);
-        }
-    });
-    </script> {% endcomment %}
 </body>
 </html>

@@ -27,30 +27,20 @@
         </ul>
     {% endif %}
 
-    <h2>Редактировать профиль</h2>
-    <form method="post" enctype="multipart/form-data" action="{% url 'update_profile' %}">
-        {% csrf_token %}
+    <h2>Профиль</h2>
+    <div class="profile-readonly" style="border:1px solid #ddd; padding:16px; border-radius:8px; background:#f9f9f9;">
+        <p><strong>Имя:</strong> {{ profile.name }}</p>
+        <p><strong>Фамилия:</strong> {{ profile.lastname }}</p>
+        <p><strong>Email:</strong> {{ user.email }}</p>
 
-        <label for="name">Имя:</label>
-        <input type="text" id="name" name="name" value="{{ profile.name }}" required><br><br>
-
-        <label for="lastname">Фамилия:</label>
-        <input type="text" id="lastname" name="lastname" value="{{ profile.lastname }}" required><br><br>
-
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" value="{{ user.email }}" required><br><br>
-
-        <label for="photo">Фото:</label>
-        <input type="file" id="photo" name="photo" accept="image/*"><br><br>
-
-        {% if profile.photo %}
-            <img src="{{ profile.photo.url }}" alt="Ваше фото" id="photo-preview" />
-        {% else %}
-            <img src="{% static 'mainpage/img/default_user_photo.png' %}" alt="Фото отсутствует" id="photo-preview" />
-        {% endif %}
-
-        <button type="submit">Сохранить изменения</button>
-    </form>
+        <p><strong>Фото:</strong><br>
+            {% if profile.photo %}
+                <img src="{{ profile.photo.url }}" alt="Фото" style="max-width:200px; border-radius:6px;">
+            {% else %}
+                <img src="{% static 'mainpage/img/default_user_photo.png' %}" alt="Фото отсутствует" style="max-width:200px; border-radius:6px;">
+            {% endif %}
+        </p>
+    </div>
 
     <h2>Система тестирования</h2>
     <ul>

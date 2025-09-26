@@ -52,12 +52,16 @@
         <button type="submit">Сохранить изменения</button>
     </form>
 
+    <h2>Система тестирования</h2>
+    <ul>
+        <li><a href="{% url 'mainpage' %}">Система тестирования</a></li>
+        <li><a href="{% url 'student_test_list' %}" class="nav-link {% if request.resolver_match.url_name == 'test_list' %}active{% endif %}">К тестам</a></li>
+    </ul>
+
     <h2>Домашние задания</h2>
     <ul>
         <li><a href="{% url 'homework_upload' %}">Загрузить домашнее задание</a></li>
         <li><a href="{% url 'homework_download' %}">Скачать домашнее задание</a></li>
-        <li><a href="{% url 'mainpage' %}">Система тестирования</a></li>
-        <li><a href="{% url 'student_test_list' %}" class="nav-link {% if request.resolver_match.url_name == 'test_list' %}active{% endif %}">К тестам</a></li>
     </ul>
 
     <form action="{% url 'logout' %}" method="post">

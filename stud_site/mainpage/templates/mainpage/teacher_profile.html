@@ -28,7 +28,42 @@
         </ul>
     {% endif %}
 
-    <h2>Редактировать профиль</h2>
+    <h2>Профиль</h2>
+    <div class="profile-readonly" style="border:1px solid #ddd; padding:16px; border-radius:8px; background:#f9f9f9;">
+        <p><strong>Имя:</strong> {{ profile.name }}</p>
+        <p><strong>Фамилия:</strong> {{ profile.lastname }}</p>
+        <p><strong>Email:</strong> {{ user.email }}</p>
+
+        <p><strong>Фото:</strong><br>
+            {% if profile.photo %}
+                <img src="{{ profile.photo.url }}" alt="Фото" style="max-width:200px; border-radius:6px;">
+            {% else %}
+                <img src="{% static 'mainpage/img/default_user_photo.png' %}" alt="Фото отсутствует" style="max-width:200px; border-radius:6px;">
+            {% endif %}
+        </p>
+    </div>
+
+    <h2>Система тестирования</h2>
+    <ul>
+        <li><a href="{% url 'mainpage' %}">NULL Результаты тестов NULL</a></li>
+        <li><a href="{% url 'create_test' %}" class="nav-link">Создать вопрос для теста</a></li>
+        <li><a href="{% url 'test_list' %}" class="nav-link">Список тестов</a></li>
+        <li><a href="{% url 'edit_test' %}" class="nav-link">Редактировать вопросы для теста</a></li>
+        <li><a href="{% url 'merge_test' %}" class="nav-link">Объединить вопросы для тестов в одну форму</a></li>
+    </ul>
+
+    <h2>V2.0 Домашние задания</h2>
+    {% comment %} <ul>
+        <li><a href="{% url 'homework_upload' %}">V2.0 Загрузить домашнее задание</a></li>
+        <li><a href="{% url 'homework_download' %}">V2.0 Скачать домашнее задание</a></li>
+    </ul> {% endcomment %}
+
+    <form action="{% url 'logout' %}" method="post">
+        {% csrf_token %}
+        <button type="submit">Выйти</button>
+    </form>
+
+    {% comment %} <h2>Редактировать профиль</h2>
     <form method="post" enctype="multipart/form-data" action="{% url 'update_profile' %}">
         {% csrf_token %}
 
@@ -56,10 +91,10 @@
     <h2>Система тестирования</h2>
     <ul>
         <li><a href="{% url 'mainpage' %}">NULL Результаты тестов NULL</a></li>
-        <li> <a href="{% url 'create_test' %}" class="nav-link">Создать тест</a></li>
+        <li> <a href="{% url 'create_test' %}" class="nav-link">Создать вопрос для теста</a></li>
         <li><a href="{% url 'test_list' %}" class="nav-link">Список тестов</a></li>
-        <li><a href="{% url 'edit_test' %}" class="nav-link">Редактировать тесты</a></li>
-        <li> <a href="{% url 'merge_test' %}" class="nav-link">Объединить тесты в один</a></li>
+        <li><a href="{% url 'edit_test' %}" class="nav-link">Редактировать вопросы для теста</a></li>
+        <li> <a href="{% url 'merge_test' %}" class="nav-link">Объединить вопросы для тестов в одину форму</a></li>
     </ul>
 
     <h2>Домашние задания</h2>
@@ -81,66 +116,6 @@
             preview.src = URL.createObjectURL(file);
         }
     });
-    </script>
+    </script> {% endcomment %}
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-{% comment %} {% load static %}
-
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8" />
-    <title>Личный кабинет учителя</title>
-    <link rel="stylesheet" href="{% static 'mainpage/css/style_profile.css' %}">
-</head>
-<body>
-
-   <header class="page-header">
-        <div class="container">
-            <nav>
-                <a href="{% url 'home' %}" class="nav-link">Главная</a>
-                <a href="{% url 'create_test' %}" class="nav-link">Создать тест</a>
-                <a href="{% url 'test_list' %}" class="nav-link">Список тестов</a>
-                <a href="{% url 'edit_test' %}" class="nav-link">Редактировать тесты</a>
-                <a href="{% url 'merge_test' %}" class="nav-link">Объединить тесты в один</a>
-            </nav>
-        </div>
-    </header> 
-    
-    <h1>Добро пожаловать в личный кабинет, {{ user.first_name }}!</h1>
-
-    {% if user.profile.photo %}
-        <div class="profile-photo">
-            <img src="{{ user.profile.photo.url }}" alt="Фото {{ user.first_name }}" style="max-width: 150px; border-radius: 8px;">
-        </div>
-    {% else %}
-        <p>Фото пользователя отсутствует.</p>
-    {% endif %}
-
-    <p>Ваши данные:</p>
-    <ul>
-        <li>Имя: {{ user.first_name }}</li>
-        <li>Фамилия: {{ user.last_name }}</li>
-        <li>Email: {{ user.email }}</li>
-        <li>Имя пользователя: {{ user.username }}</li>
-    </ul>
-
-    <a href="{% url 'edit_teacher_profile' %}" class="nav-link">Редактировать данные</a>
-    <br>
-
-    {% comment %} <a href="{% url 'create_test' %}" class="nav-link">Создать тест</a>
-    <a href="{% url 'test_list' %}" class="nav-link">Список тестов</a>
-    <a href="{% url 'edit_test' %}" class="nav-link">Редактировать тесты</a>
-    <a href="{% url 'merge_test' %}" class="nav-link">Объединить тесты в один</a> {% endcomment %}
-
-{% comment %} </body>
-</html> {% endcomment %}

@@ -12,7 +12,6 @@ urlpatterns = [
     path('teacher/register/', views.teacher_register, name='teacher_register'),
     path('teacher/profile/', views.teacher_profile, name='teacher_profile'),
     path('teacher/login/', views.teacher_login, name='teacher_login'),
-    path('test1/', views.test1, name='test1'),
     path('take_test/', views.take_test, name='take_test'),
     path('create_test/', views.create_test, name='create_test'),
     path('test_list/', views.test_list, name='test_list'),
@@ -21,20 +20,11 @@ urlpatterns = [
     path('test/<int:test_id>/delete/', views.delete_test, name='delete_test'),
     path('edit_test/', views.edit_test, name='edit_test'),
     path('test/result/', views.test_result, name='test_result'),
-    # Путь для редактирования вопроса (пример)
     path('question/<int:pk>/edit/', views.question_edit, name='question_edit'),
-
-    # Аналогично для удаления вопроса (если есть)
     path('question/<int:pk>/delete/', views.question_delete, name='question_delete'),
-
-    # Путь для создания вопроса
     path('question/create/', views.question_create, name='question_create'),
-    
     path('student/tests/', views.student_test_list, name='student_test_list'),
-    
-    path('teacher/profile/edit/', views.edit_teacher_profile, name='edit_teacher_profile'),
-
-    path('test3/', views.test3, name='test3'),
+    # path('teacher/profile/edit/', views.edit_teacher_profile, name='edit_teacher_profile'),
     path('check/', views.check, name='check'),
     path('student_cabinet/', views.student_cabinet, name='student_cabinet'),
     path('update_profile/', views.update_profile, name='update_profile'),

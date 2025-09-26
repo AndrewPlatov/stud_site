@@ -23,16 +23,9 @@ def check(request):
 def home(request):
     return render(request, 'mainpage/home.html')
 
-def summary(request):
-    return render(
-        request,               # так будет всегда
-        'mainpage/summary.html',  # путь к шаблону
-        # здесь будут данные!
-    )
-
 # ----------------------------------------------------------------------------------------------------------------------------------------------- #
 
-# логика формы регистрации 
+# логика формы регистрации ученика
 
 from . import forms
 from django.contrib import auth
@@ -57,115 +50,12 @@ def register(request):
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------- #
 
-# логика первого варианта системы тестирования
-
-from django.shortcuts import render
-
-def test1(request):
-    return render(request, 'mainpage/test1.html')  
-
-def test2(request):
-        return render(request, 'mainpage/test2.html') 
-    
-def test3(request):
-    return render(request, 'mainpage/test3.html')
-
-# ----------------------------------------------------------------------------------------------------------------------------------------------- #
-
-# логика обработки первого варианта системы тестирования 
-
-from django.shortcuts import render, redirect
-from .models import Question
-
-def quiz(request):
-    questions = list(Question.objects.all())
-    total_questions = len(questions)
-
-    if 'current_index' not in request.session:
-        request.session['current_index'] = 0
-        request.session['score'] = 0
-        request.session['results'] = []
-
-    current_index = request.session['current_index']
-    score = request.session['score']
-    results = request.session['results']
-
-    if current_index >= total_questions:
-        # Тест завершен, показываем результаты
-        grade = calculate_grade(score, total_questions)
-        context = {
-            'score': score,
-            'total': total_questions,
-            'grade': grade,
-            'results': results,
-        }
-        # Очистка сессии для нового теста при повторе
-        del request.session['current_index']
-        del request.session['score']
-        del request.session['results']
-        return render(request, 'quiz/result.html', context)
-
-    question = questions[current_index]
-
-    if request.method == 'POST':
-        user_answers = None
-        is_correct = False
-
-        if question.question_type == 'text-input':
-            user_input = request.POST.get('user_answer', '').strip()
-            correct_answers = question.correct_answers
-            is_correct = any(user_input.lower() == ans.lower() for ans in correct_answers)
-            user_answers = [user_input]
-        else:
-            user_answers = request.POST.getlist('answers')
-            correct_answers_set = set(ans.lower() for ans in question.correct_answers)
-            user_answers_set = set(ans.lower() for ans in user_answers)
-            is_correct = correct_answers_set == user_answers_set
-
-        # Обновляем результаты и счетчик
-        results.append({
-            'question': question.question_text,
-            'user_answers': user_answers,
-            'correct_answers': question.correct_answers,
-            'is_correct': is_correct,
-        })
-
-        if is_correct:
-            request.session['score'] += 1
-
-        # Переход к следующему вопросу
-        request.session['current_index'] += 1
-        request.session['results'] = results
-
-        # return JsonResponse(
-        #     results
-        # )
-        return redirect('quiz')
-
-    context = {
-        'question': question,
-    }
-    return render(request, 'quiz/question.html', context)
-
-def calculate_grade(score, total):
-    percentage = score / total
-    if percentage == 1:
-        return 5
-    elif percentage >= 0.8:
-        return 4
-    elif percentage >= 0.6:
-        return 3
-    elif percentage >= 0.4:
-        return 2
-    else:
-        return 1
-
-# ----------------------------------------------------------------------------------------------------------------------------------------------- #
-
 def student_cabinet(request):
     return render(request, 'mainpage/student_cabinet.html')
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------- #
+
+# Обновление профиля ученика
 
 @login_required
 def update_profile(request):
@@ -192,7 +82,7 @@ def teacher_login_required(view_func):
     def wrapper(request, *args, **kwargs):
         user = request.user
         if not user.is_authenticated:
-            return redirect(reverse('teacher_login'))  # заменить на ваше имя url логина
+            return redirect(reverse('teacher_login'))
 
         # Проверяем атрибут или группу, которая подтверждает, что пользователь - учитель
         if not getattr(user, 'is_teacher', False):
@@ -203,6 +93,8 @@ def teacher_login_required(view_func):
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------- #
 
+# Загрузка ДЗ
+
 @teacher_login_required
 def homework_upload(request):
     if request.method == 'POST':
@@ -212,12 +104,16 @@ def homework_upload(request):
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------- #
 
+# Выгрузка ДЗ
+
 @teacher_login_required
 def homework_download(request):
     # логика поиска файла и отдачи пользователю
     pass
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------- #
+
+# Кабинет ученика
 
 @login_required(login_url='login')
 def student_cabinet(request):
@@ -252,6 +148,8 @@ def student_cabinet(request):
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------- #
 
+# Еще одна регистрация ???
+
 def register(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST)
@@ -264,6 +162,8 @@ def register(request):
     return render(request, 'registration/register.html', {'form': form})
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------- #
+
+# Обновление профиля ученика ???
 
 @login_required
 def update_profile(request):
@@ -296,18 +196,15 @@ def update_profile(request):
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------- #
 
+# Регистрация учителя
+
 def teacher_register(request):
     if request.method == 'POST':
         form = TeacherSignUpForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
-            # Если есть кастомное поле для роли
-            # user.is_teacher = True
             user.save()
-            login(request, user)  # сразу логиним пользователя
-
-            # Можно сохранить данные профиля учителя при необходимости
-
+            login(request, user)
             return redirect('teacher_profile')
     else:
         form = TeacherSignUpForm()
@@ -319,10 +216,11 @@ from django.contrib.auth.decorators import login_required
 
 @teacher_login_required
 def teacher_profile(request):
-    # можно добавить логику, если нужно отобразить данные учителя
     return render(request, 'mainpage/teacher_profile.html', {'user': request.user})
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------- #
+
+# Логин учителя
 
 def teacher_login(request):
     if request.method == 'POST':
@@ -331,9 +229,8 @@ def teacher_login(request):
         
         user = authenticate(request, username=username, password=password)
         if user is not None:
-            # Возможно, проверить, что пользователь - учитель, если есть такая логика
             login(request, user)
-            return redirect('teacher_profile')  # или куда нужно после входа
+            return redirect('teacher_profile')
         else:
             messages.error(request, "Неверное имя пользователя или пароль")
     
@@ -346,7 +243,7 @@ def teacher_profile(request):
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------- #
 
-# mainpage/views.py
+# Логика создания теста
 
 from django.shortcuts import render, redirect
 from .models import Question
@@ -362,7 +259,6 @@ def create_test(request):
                 formset.save()
                 return redirect('test_list')
             else:
-                # если formset невалиден, показываем ошибки
                 question.delete()  # очищаем вопрос, если ответы невалидны
         else:
             formset = AnswerFormSet(request.POST)
@@ -377,7 +273,13 @@ def create_test(request):
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------- #
 
-# mainpage/views.py
+from mainpage.models import Test
+
+# Список тестов
+
+def test_list(request):
+    tests = Test.objects.all()
+    return render(request, 'mainpage/test_list.html', {'tests': tests})
 
 from django.shortcuts import render
 from .models import Question
@@ -408,98 +310,25 @@ def delete_test(request, test_id):
         return redirect('test_list')
     return render(request, 'mainpage/confirm_delete.html', {'test': test})
 
+# ----------------------------------------------------------------------------------------------------------------------------------------------- #
 
-def take_test(request, test_id):
-    test = get_object_or_404(Test, id=test_id)
-    questions = test.questions.all()
-    result = None
-
-    if request.method == 'POST':
-        user_answers = {}
-        for question in questions:
-            ans_id = request.POST.get(f'question_{question.id}')
-            if ans_id:
-                user_answers[question.id] = int(ans_id)
-
-        total_questions = questions.count()
-        correct_count = 0
-
-        for question in questions:
-            correct_answers = question.answer_set.filter(is_correct=True).values_list('id', flat=True)
-            selected = user_answers.get(question.id)
-            if selected in correct_answers:
-                correct_count += 1
-
-        result = {
-            'total': total_questions,
-            'correct': correct_count,
-            'percent': round(correct_count / total_questions * 100, 2) if total_questions else 0,
-        }
-
-    return render(request, 'mainpage/take_test.html', {
-        'test': test,
-        'questions': questions,
-        'result': result,
-    })
-
-from django.shortcuts import render
-from mainpage.models import Test, Question
-
-def main(request):
-    test = Test.objects.last()
-    questions = test.questions.all() if test else []
-    result = None
-
-    if request.method == 'POST' and test:
-        # Собираем ответы пользователя из POST
-        user_answers = {}  # {question_id: answer_id}
-        for question in questions:
-            ans_id = request.POST.get(f'question_{question.id}')
-            if ans_id:
-                user_answers[question.id] = int(ans_id)
-
-        # Подсчет правильных ответов
-        total_questions = questions.count()
-        correct_count = 0
-
-        for question in questions:
-            correct_answers = question.answer_set.filter(is_correct=True).values_list('id', flat=True)
-            selected = user_answers.get(question.id)
-
-            # Для теста с одним правильным вариантом:
-            if selected in correct_answers:
-                correct_count += 1
-
-        result = {
-            'total': total_questions,
-            'correct': correct_count,
-            'percent': round(correct_count / total_questions * 100, 2) if total_questions > 0 else 0,
-        }
-
-    return render(request, 'mainpage/main.html', {
-        'test': test,
-        'questions': questions,
-        'result': result,
-    })
-    
-from mainpage.models import Test
-
-def test_list(request):
-    tests = Test.objects.all()
-    return render(request, 'mainpage/test_list.html', {'tests': tests})
-
+# Прохождение теста
 
 def take_test(request, test_id):
     test = Test.objects.get(id=test_id)
-    questions = test.questions.prefetch_related('answers').all()  # assuming related_name='questions' и 'answers'
+    questions = test.questions.prefetch_related('answers').all()
 
     return render(request, 'mainpage/take_test.html', {
         'test': test,
         'questions': questions,
     })
 
+# ----------------------------------------------------------------------------------------------------------------------------------------------- #
+
+# Редактирование теста
+
 def edit_test(request):
-    questions = Question.objects.all()  # либо фильтровать по нужному тесту
+    questions = Question.objects.all()
     return render(request, 'mainpage/edit_test.html', {'questions': questions})
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------- #
@@ -526,7 +355,7 @@ def question_edit(request, pk):
     return render(request, 'mainpage/create_test.html', {
         'question_form': question_form,
         'formset': formset,
-        'is_edit': True,  # если хотите показать заголовок редактирования в шаблоне
+        'is_edit': True,
     })
 
 def question_delete(request, pk):
@@ -537,51 +366,55 @@ def question_delete(request, pk):
     return render(request, 'mainpage/question_confirm_delete.html', {'question': question})
 
 def question_create(request):
-    # Логика создания вопроса
     return render(request, 'mainpage/question_create.html')
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------- #
+
+# логика вывода списка тестов 
 
 from django.shortcuts import render
 from .models import Test
 
 def student_test_list(request):
-    # Получаем список тестов (возможно, фильтруете по условиям)
     tests = Test.objects.all()
-
     context = {
         'tests': tests,
     }
     return render(request, 'mainpage/student_test_list.html', context)
     
+# ----------------------------------------------------------------------------------------------------------------------------------------------- #
 
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
-from .forms import UserEditForm, ProfileEditForm
+# Редактирование профиля учителя 
 
-@login_required(login_url='teacher_login')
-def edit_teacher_profile(request):
-    user = request.user
-    profile = user.profile
+# from django.contrib.auth.decorators import login_required
+# from django.shortcuts import render, redirect
+# from .forms import UserEditForm, ProfileEditForm
 
-    if request.method == 'POST':
-        user_form = UserEditForm(request.POST, instance=user)
-        profile_form = ProfileEditForm(request.POST, request.FILES, instance=profile)
+# @login_required(login_url='teacher_login')
+# def edit_teacher_profile(request):
+#     user = request.user
+#     profile = user.profile
+
+#     if request.method == 'POST':
+#         user_form = UserEditForm(request.POST, instance=user)
+#         profile_form = ProfileEditForm(request.POST, request.FILES, instance=profile)
         
-        if user_form.is_valid() and profile_form.is_valid():
-            user_form.save()
-            profile_form.save()
-            return redirect('teacher_profile')
-    else:
-        user_form = UserEditForm(instance=user)
-        profile_form = ProfileEditForm(instance=profile)
+#         if user_form.is_valid() and profile_form.is_valid():
+#             user_form.save()
+#             profile_form.save()
+#             return redirect('teacher_profile')
+#     else:
+#         user_form = UserEditForm(instance=user)
+#         profile_form = ProfileEditForm(instance=profile)
 
-    context = {
-        'user_form': user_form,
-        'profile_form': profile_form,
-    }
-    return render(request, 'mainpage/edit_teacher_profile.html', context)
-# ------------------------------------------------------------------------------- #
+#     context = {
+#         'user_form': user_form,
+#         'profile_form': profile_form,
+#     }
+#     return render(request, 'mainpage/edit_teacher_profile.html', context)
+
+# ----------------------------------------------------------------------------------------------------------------------------------------------- #
+
 # @login_required
 # def teacher_profile(request):
 #     user = request.user
@@ -724,7 +557,7 @@ def test_result(request):
     percent = (correct_count / total_questions) * 100 if total_questions else 0
     grade = get_grade(percent)
 
-    # Можно очистить сессию, если нужно
+    # Можно очистить сессию
     # del request.session['user_answers']
     # del request.session['test_id']
 

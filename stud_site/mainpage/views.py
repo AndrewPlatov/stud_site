@@ -25,28 +25,97 @@ def home(request):
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------- #
 
+from django.shortcuts import render, redirect
+from django.contrib.auth import login
+from .forms import RegisterForm, TeacherSignUpForm
+from .models import Profile
+from django.contrib import messages
+
+def register_user(request):
+    if request.method == 'POST':
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            # Проверяем, существует ли профиль для пользователя
+            profile, created = Profile.objects.get_or_create(user=user)
+            if created:
+                profile.save()
+            login(request, user)
+            return redirect('student_cabinet')  # Перенаправление на личный кабинет
+    else:
+        form = RegisterForm()
+    return render(request, 'registration/register.html', {'form': form})
+
+def register_teacher(request):
+    if request.method == 'POST':
+        form = TeacherSignUpForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            profile, created = Profile.objects.get_or_create(user=user, defaults={'is_teacher': True})
+            if created:
+                profile.save()
+            login(request, user)
+            return redirect('teacher_profile')  # Перенаправление на личный кабинет
+    else:
+        form = TeacherSignUpForm()
+    return render(request, 'mainpage/teacher_register.html', {'form': form})
+
+
+
+from django.shortcuts import redirect
+from django.contrib import messages
+
+@login_required
+def student_cabinet(request):
+    try:
+        profile = request.user.profile  # Получаем профиль текущего пользователя
+    except Profile.DoesNotExist:
+        messages.error(request, "Профиль не найден. Пожалуйста, создайте профиль.")
+        return redirect('home')  # Перенаправление на домашнюю страницу или страницу регистрации
+    
+    return render(request, 'mainpage/student_cabinet.html', {'profile': profile, 'user': request.user})
+
+
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+from django.contrib import messages
+
+@login_required
+def teacher_cabinet(request):
+    try:
+        profile = request.user.profile  # Получаем профиль текущего пользователя
+        if not profile.is_teacher:
+            messages.error(request, "У вас нет доступа к этому кабинету.")
+            return redirect('home')  # Переход на домашнюю страницу или другую я проекту
+    except Profile.DoesNotExist:
+        messages.error(request, "Профиль не найден. Пожалуйста, создайте профиль.")
+        return redirect('home')  # Перенаправление на домашнюю страницу или страницу регистрации
+
+    return render(request, 'mainpage/teacher_cabinet.html', {'profile': profile, 'user': request.user})
+
+
 # логика формы регистрации ученика
 
-from . import forms
-from django.contrib import auth
+# from . import forms
+# from django.contrib import auth
 
-def register(request):
-    if request.method == 'POST':
-        user_form = forms.UserRegistrationForm(request.POST)
-        if user_form.is_valid():
-            new_user = user_form.save(commit=False)
-            new_user.set_password(user_form.cleaned_data['password'])
-            new_user.save()
-            auth.login(request, new_user)
-            return redirect('/')
-    else:
-        user_form = forms.UserRegistrationForm()
-    return render(
-        request,
-        'user/register.html',
-        {
-            'form': user_form
-        })
+# def register(request):
+#     if request.method == 'POST':
+#         user_form = forms.UserRegistrationForm(request.POST)
+#         if user_form.is_valid():
+#             new_user = user_form.save(commit=False)
+#             new_user.set_password(user_form.cleaned_data['password'])
+#             new_user.save()
+#             auth.login(request, new_user)
+#             return redirect('/')
+#     else:
+#         user_form = forms.UserRegistrationForm()
+#     return render(
+#         request,
+#         'user/register.html',
+#         {
+#             'form': user_form
+#         })
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------- #
 
@@ -57,19 +126,19 @@ def student_cabinet(request):
 
 # Обновление профиля ученика
 
-@login_required
-def update_profile(request):
-    if request.method == 'POST':
-        user = request.user
-        user.email = request.POST.get('email')
-        user.first_name = request.POST.get('name')
-        # Обработка загрузки фото
-        if 'photo' in request.FILES:
-            user.photo = request.FILES['photo']
-        user.save()
-        return redirect('student_cabinet')
-    # На GET запрос - просто перенаправление или форма с текущими данными
-    return render(request, 'mainpage/student_cabinet.html')
+# @login_required
+# def update_profile(request):
+#     if request.method == 'POST':
+#         user = request.user
+#         user.email = request.POST.get('email')
+#         user.first_name = request.POST.get('name')
+#         # Обработка загрузки фото
+#         if 'photo' in request.FILES:
+#             user.photo = request.FILES['photo']
+#         user.save()
+#         return redirect('student_cabinet')
+#     # На GET запрос - просто перенаправление или форма с текущими данными
+#     return render(request, 'mainpage/student_cabinet.html')
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------- #
 
@@ -115,31 +184,31 @@ def homework_download(request):
 
 # Кабинет ученика
 
-@login_required(login_url='login')
-def student_cabinet(request):
-    user = request.user
+# @login_required(login_url='login')
+# def student_cabinet(request):
+#     user = request.user
 
-    if request.method == 'POST':
-        name = request.POST.get('name')
-        email = request.POST.get('email')
-        photo = request.FILES.get('photo')
+#     if request.method == 'POST':
+#         name = request.POST.get('name')
+#         email = request.POST.get('email')
+#         photo = request.FILES.get('photo')
 
-        user.first_name = name
-        user.email = email
+#         user.first_name = name
+#         user.email = email
 
-        if photo:
-            if hasattr(user, 'profile'):
-                user.profile.photo = photo
-                user.profile.save()
-            else:
+#         if photo:
+#             if hasattr(user, 'profile'):
+#                 user.profile.photo = photo
+#                 user.profile.save()
+#             else:
 
-                user.photo = photo
+#                 user.photo = photo
 
-        user.save()
-        messages.success(request, 'Профиль успешно обновлен.')
-        return redirect('student_cabinet')
+#         user.save()
+#         messages.success(request, 'Профиль успешно обновлен.')
+#         return redirect('student_cabinet')
 
-    return render(request, 'mainpage/student_cabinet.html', {'user': user})
+#     return render(request, 'mainpage/student_cabinet.html', {'user': user})
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------- #
 
@@ -150,67 +219,65 @@ def student_cabinet(request):
 
 # Еще одна регистрация ???
 
-def register(request):
-    if request.method == 'POST':
-        form = RegisterForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            login(request, user)
-            return redirect('student_cabinet')
-    else:
-        form = RegisterForm()
-    return render(request, 'registration/register.html', {'form': form})
+# def register(request):
+#     if request.method == 'POST':
+#         form = RegisterForm(request.POST)
+#         if form.is_valid():
+#             user = form.save()
+#             login(request, user)
+#             return redirect('student_cabinet')
+#     else:
+#         form = RegisterForm()
+#     return render(request, 'registration/register.html', {'form': form})
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------- #
 
 # Обновление профиля ученика ???
 
-@login_required
-def update_profile(request):
-    user = request.user
+# @login_required
+# def update_profile(request):
+#     user = request.user
 
-    try:
-        profile = user.profile
-    except Profile.DoesNotExist:
-        profile = Profile(user=user)
+#     try:
+#         profile = user.profile
+#     except Profile.DoesNotExist:
+#         profile = Profile(user=user)
 
-    if request.method == 'POST':
-        profile.name = request.POST.get('name', profile.name)
-        profile.lastname = request.POST.get('lastname', profile.lastname)
+#     if request.method == 'POST':
+#         profile.name = request.POST.get('name', profile.name)
+#         profile.lastname = request.POST.get('lastname', profile.lastname)
 
-        email = request.POST.get('email', user.email)
-        if email and email != user.email:
-            user.email = email
-            user.save()
+#         email = request.POST.get('email', user.email)
+#         if email and email != user.email:
+#             user.email = email
+#             user.save()
 
-        if 'photo' in request.FILES:
-            profile.photo = request.FILES['photo']
+#         if 'photo' in request.FILES:
+#             profile.photo = request.FILES['photo']
 
-        profile.save()
-        messages.success(request, 'Профиль успешно обновлён.')
+#         profile.save()
+#         messages.success(request, 'Профиль успешно обновлён.')
 
-    return render(request, 'mainpage/student_cabinet.html', {
-        'profile': profile,
-        'user': user,
-    })
+#     return render(request, 'mainpage/student_cabinet.html', {
+#         'profile': profile,
+#         'user': user,
+#     })
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------- #
 
 # Регистрация учителя
 
-def teacher_register(request):
-    if request.method == 'POST':
-        form = TeacherSignUpForm(request.POST)
-        if form.is_valid():
-            user = form.save(commit=False)
-            user.save()
-            login(request, user)
-            return redirect('teacher_profile')
-    else:
-        form = TeacherSignUpForm()
-    return render(request, 'mainpage/teacher_register.html', {'form': form})
-
-from django.contrib.auth.decorators import login_required
+# def teacher_register(request):
+#     if request.method == 'POST':
+#         form = TeacherSignUpForm(request.POST)
+#         if form.is_valid():
+#             user = form.save(commit=False)
+#             user.save()
+#             login(request, user)
+#             return redirect('teacher_profile')
+#     else:
+#         form = TeacherSignUpForm()
+#     return render(request, 'mainpage/teacher_register.html', {'form': form})
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------- #
 
@@ -284,9 +351,9 @@ def test_list(request):
 from django.shortcuts import render
 from .models import Question
 
-def test_list(request):
-    questions = Question.objects.prefetch_related('answers').all()
-    return render(request, 'mainpage/test_list.html', {'questions': questions})
+# def test_list(request):
+#     questions = Question.objects.prefetch_related('answers').all()
+#     return render(request, 'mainpage/test_list.html', {'questions': questions})
 
 from django.shortcuts import render, redirect, get_object_or_404
 from mainpage.forms import TestCreateForm  # импорт формы с учетом изменений

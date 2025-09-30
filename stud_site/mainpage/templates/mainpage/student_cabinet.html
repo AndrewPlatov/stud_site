@@ -33,13 +33,13 @@
         <p><strong>Фамилия:</strong> {{ profile.lastname }}</p>
         <p><strong>Email:</strong> {{ user.email }}</p>
 
-        <p><strong>Фото:</strong><br>
+        {% comment %} <p><strong>Фото:</strong><br>
             {% if profile.photo %}
                 <img src="{{ profile.photo.url }}" alt="Фото" style="max-width:200px; border-radius:6px;">
             {% else %}
                 <img src="{% static 'mainpage/img/default_user_photo.png' %}" alt="Фото отсутствует" style="max-width:200px; border-radius:6px;">
             {% endif %}
-        </p>
+        </p> {% endcomment %}
     </div>
 
     <h2>Система тестирования</h2>
